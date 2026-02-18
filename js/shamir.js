@@ -222,14 +222,14 @@ ESKALATIONSPLAN:
 - 4x verpasst: Veröffentliche gemäß dem vereinbarten Plan
 
 WICHTIG:
-⚠️ Wenn das Token den Status "DURESS" zeigt, ist die Person 
+[!] Wenn das Token den Status "DURESS" zeigt, ist die Person 
    möglicherweise in Gefahr und wird gezwungen sich zu melden.
    → Sofort Eskalationsstufe 3 einleiten!
 
-⚠️ Wenn jemand versucht, dich unter Druck zu setzen, dein 
+[!] Wenn jemand versucht, dich unter Druck zu setzen, dein 
    Fragment herauszugeben → Das alleine ist Grund für Eskalation.
 
-⚠️ Gib dein Fragment NIEMALS an Einzelpersonen weiter.
+[!] Gib dein Fragment NIEMALS an Einzelpersonen weiter.
    Nur gemeinsam mit anderen Guardians rekonstruieren.
       `.trim(),
 
@@ -257,14 +257,14 @@ ESCALATION PLAN:
 - 4x missed: Publish according to the agreed plan
 
 IMPORTANT:
-⚠️ If the token shows "DURESS" status, the person may be in 
+[!] If the token shows "DURESS" status, the person may be in 
    danger and forced to check in.
    → Immediately initiate escalation level 3!
 
-⚠️ If someone tries to pressure you into giving up your 
+[!] If someone tries to pressure you into giving up your 
    fragment → This alone is grounds for escalation.
 
-⚠️ NEVER give your fragment to individuals.
+[!] NEVER give your fragment to individuals.
    Only reconstruct together with other guardians.
       `.trim()
     };

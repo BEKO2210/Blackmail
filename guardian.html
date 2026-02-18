@@ -65,15 +65,15 @@
 
         <div id="verifyResult" class="hidden mt-6 animate-in">
           <div id="verifyOk" class="alert alert-success hidden">
-            <span class="alert-icon">&#x2705;</span>
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></span>
             <div><strong data-i18n="guardian.verify.ok">Token valid</strong><br><span id="verifyOkDetails"></span></div>
           </div>
           <div id="verifyDuress" class="alert alert-danger hidden">
-            <span class="alert-icon">&#x1f6a8;</span>
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></span>
             <div><span data-i18n="guardian.verify.duress"><strong>DURESS DETECTED — Person may be in danger!</strong><br>The person was forced to check in. The token looks normal but contains a hidden warning signal.<br><br><strong>Immediately initiate escalation level 3!</strong><br>Contact other guardians and begin fragment assembly.</span></div>
           </div>
           <div id="verifyInvalid" class="alert alert-warning hidden">
-            <span class="alert-icon">&#x274c;</span>
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6m0-6l6 6"/></svg></span>
             <div><strong data-i18n="guardian.verify.invalid">Token invalid</strong><br><span id="verifyInvalidDetails"></span></div>
           </div>
         </div>
@@ -92,7 +92,7 @@
         </div>
 
         <div class="alert alert-warning">
-          <span class="alert-icon">&#x26a0;&#xfe0f;</span>
+          <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4m0 4h.01"/></svg></span>
           <div data-i18n="guardian.assemble.warning">Only assemble fragments when escalation conditions are met. All participating guardians must agree.</div>
         </div>
 
@@ -124,7 +124,7 @@
 
         <div id="assemblyResult" class="hidden mt-6">
           <div class="alert alert-success" id="assemblySuccess" style="display:none">
-            <span class="alert-icon">&#x1f513;</span>
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 019.9-1"/></svg></span>
             <div><span data-i18n="guardian.assemble.success"><strong>Passphrase successfully reconstructed!</strong><br>Use this passphrase to decrypt the evidence package.</span></div>
           </div>
           <div class="hash-display" id="recoveredPassphrase" style="display:none">
@@ -132,7 +132,7 @@
             <span id="recoveredText"></span>
           </div>
           <div class="alert alert-danger" id="assemblyError" style="display:none">
-            <span class="alert-icon">&#x274c;</span>
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6m0-6l6 6"/></svg></span>
             <span id="assemblyErrorText"></span>
           </div>
         </div>
@@ -166,13 +166,13 @@
 
         <div id="decryptResult" class="hidden mt-6">
           <div class="alert alert-success" id="decryptSuccess" style="display:none">
-            <span class="alert-icon">&#x1f4c2;</span>
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></span>
             <div><strong data-i18n="guardian.decrypt.success">Successfully decrypted!</strong><br><span id="decryptDetails"></span></div>
           </div>
           <div id="decryptedFiles"></div>
           <div id="decryptNote" style="display:none"></div>
           <div class="alert alert-danger" id="decryptError" style="display:none">
-            <span class="alert-icon">&#x274c;</span>
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6m0-6l6 6"/></svg></span>
             <span id="decryptErrorText"></span>
           </div>
         </div>
@@ -193,6 +193,7 @@
 
   </div>
 
+  <script src="js/icons.js"></script>
   <script src="js/crypto.js"></script>
   <script src="js/shamir.js"></script>
   <script src="js/checkin.js"></script>
