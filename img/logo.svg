@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1e2e"/>
+      <stop offset="100%" stop-color="#0d1017"/>
+    </linearGradient>
+    <linearGradient id="envGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a3040"/>
+      <stop offset="100%" stop-color="#1c2230"/>
+    </linearGradient>
+    <radialGradient id="sealGrad" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#e74c3c"/>
+      <stop offset="100%" stop-color="#a82020"/>
+    </radialGradient>
+    <radialGradient id="sealShine" cx="35%" cy="30%" r="40%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.3)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Circular background -->
+  <circle cx="100" cy="100" r="96" fill="url(#bgGrad)" stroke="#2a3248" stroke-width="1.5"/>
+
+  <!-- Subtle ring -->
+  <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(59,130,246,0.08)" stroke-width="1"/>
+
+  <!-- Envelope body -->
+  <rect x="45" y="58" width="110" height="78" rx="6" fill="url(#envGrad)" stroke="#3a4258" stroke-width="1.2" filter="url(#shadow)"/>
+
+  <!-- Envelope flap lines (X pattern) -->
+  <line x1="45" y1="58" x2="100" y2="102" stroke="#3a4258" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="155" y1="58" x2="100" y2="102" stroke="#3a4258" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- Envelope bottom fold lines -->
+  <line x1="45" y1="136" x2="80" y2="108" stroke="#2a3248" stroke-width="0.8" stroke-linecap="round"/>
+  <line x1="155" y1="136" x2="120" y2="108" stroke="#2a3248" stroke-width="0.8" stroke-linecap="round"/>
+
+  <!-- Wax seal circle -->
+  <circle cx="100" cy="100" r="18" fill="url(#sealGrad)" stroke="#8b1a1a" stroke-width="1" filter="url(#shadow)"/>
+  <!-- Seal bumpy edge -->
+  <circle cx="100" cy="100" r="20" fill="none" stroke="rgba(167,32,32,0.5)" stroke-width="2" stroke-dasharray="3,3"/>
+  <!-- Seal shine -->
+  <circle cx="100" cy="100" r="17" fill="url(#sealShine)"/>
+
+  <!-- Shield icon on seal -->
+  <path d="M100 88 L110 93 L110 102 C110 108 105 112 100 114 C95 112 90 108 90 102 L90 93 Z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M96 101 L99 104 L105 96" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Hooded figure (bottom-right) -->
+  <g transform="translate(138, 115)" filter="url(#glow)">
+    <!-- Hood/cloak -->
+    <path d="M0 10 C0 -2 6 -10 15 -14 C24 -10 30 -2 30 10 L30 32 C30 34 28 36 26 36 L4 36 C2 36 0 34 0 32 Z" fill="#c8cdd8" opacity="0.9"/>
+    <!-- Hood shadow -->
+    <path d="M3 10 C3 0 8 -7 15 -11 C22 -7 27 0 27 10 L27 14 C27 14 22 8 15 8 C8 8 3 14 3 14 Z" fill="#a0a8b8" opacity="0.5"/>
+    <!-- Face circle -->
+    <circle cx="15" cy="16" r="9" fill="#1a1e2e"/>
+    <!-- Question mark -->
+    <text x="15" y="20" text-anchor="middle" font-family="DM Sans, Arial, sans-serif" font-size="14" font-weight="700" fill="#e8eaed">?</text>
+  </g>
+
+  <!-- "B" at bottom -->
+  <text x="100" y="164" text-anchor="middle" font-family="DM Sans, Arial, sans-serif" font-size="16" font-weight="700" fill="#5a6178" letter-spacing="1">B</text>
+</svg>
