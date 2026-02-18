@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS — Dead Man's Switch</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="AEGIS — Client-side encrypted Dead Man's Switch. Schütze deine Informationen mit verteilter Verschlüsselung.">
+</head>
+<body>
+  <div class="aegis-app">
+
+    <header class="aegis-header">
+      <a href="index.html" class="aegis-logo">
+        <div class="aegis-logo-icon">A</div>
+        <span class="aegis-logo-text">AEGIS</span>
+        <span class="aegis-logo-badge">v1.0</span>
+      </a>
+      <nav class="aegis-nav">
+        <a href="app/setup.html">Setup</a>
+        <a href="app/checkin.html">Check-in</a>
+        <a href="app/guardian.html">Guardian</a>
+        <a href="app/verify.html">Verify</a>
+      </nav>
+    </header>
+
+    <main class="aegis-main">
+
+      <section class="hero">
+        <div class="hero-shield">🛡️</div>
+        <h1>Deine Versicherung.<br>Clientseitig verschlüsselt.</h1>
+        <p class="subtitle">
+          AEGIS ist ein Dead Man's Switch — ein System das deine 
+          Informationen schützt und automatisch freigibt, wenn du 
+          dich nicht mehr melden kannst. Alles läuft in deinem Browser. 
+          Kein Server. Keine Accounts. Kein Vertrauen nötig.
+        </p>
+        <a href="app/setup.html" class="btn btn-dark btn-lg">
+          ↳ Einrichtung starten
+        </a>
+      </section>
+
+      <section class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <div class="feature-title">AES-256 Verschlüsselung</div>
+          <div class="feature-desc">
+            Militärgrad-Verschlüsselung direkt im Browser. 
+            Deine Daten verlassen nie dein Gerät unverschlüsselt.
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧩</div>
+          <div class="feature-title">Shamir's Secret Sharing</div>
+          <div class="feature-desc">
+            Der Schlüssel wird in Fragmente aufgeteilt. 
+            Nur gemeinsam können Vertrauenspersonen entschlüsseln.
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⏰</div>
+          <div class="feature-title">Dead Man's Switch</div>
+          <div class="feature-desc">
+            Regelmäßiges Check-in hält das System still. 
+            Bleibt es aus, startet die Eskalation automatisch.
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🆘</div>
+          <div class="feature-title">Duress-Code</div>
+          <div class="feature-desc">
+            Ein spezieller Code signalisiert deinen Guardians 
+            heimlich, dass du unter Zwang handelst.
+          </div>
+        </div>
+      </section>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Wie funktioniert AEGIS?</h3>
+        </div>
+        <div class="card-desc" style="line-height: 1.8;">
+          <strong>1. Einrichten:</strong> Lade deine Beweise hoch, wähle eine Passphrase und eine Duress-Passphrase. Alles wird in deinem Browser verschlüsselt.<br><br>
+          <strong>2. Verteilen:</strong> Der Entschlüsselungsschlüssel wird in Fragmente aufgeteilt. Jeder Guardian erhält ein Kit mit seinem Fragment und einer Anleitung.<br><br>
+          <strong>3. Check-in:</strong> Melde dich regelmäßig mit deiner Passphrase. Deine Guardians erhalten ein Token das beweist, dass alles in Ordnung ist.<br><br>
+          <strong>4. Schutz:</strong> Wirst du gezwungen? Nutze den Duress-Code — das Token sieht normal aus, aber deine Guardians erkennen das versteckte Signal.<br><br>
+          <strong>5. Eskalation:</strong> Bleiben Check-ins aus, wissen deine Guardians was zu tun ist. Ihre Fragmente zusammen ergeben den Schlüssel.
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <span class="alert-icon">ℹ️</span>
+        <div>
+          <strong>100% clientseitig.</strong> Diese App läuft vollständig in deinem Browser. 
+          Es gibt keinen Server, keine Datenbank, keine Accounts. 
+          Du kannst sie offline nutzen — einfach die Dateien herunterladen.
+          Der Quellcode ist offen einsehbar.
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="aegis-footer">
+      AEGIS v1.0 — Open Source — Keine Daten verlassen deinen Browser
+    </footer>
+
+  </div>
+</body>
+</html>

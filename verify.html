@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS — Verifizierung</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="aegis-app">
+
+    <header class="aegis-header">
+      <a href="../index.html" class="aegis-logo">
+        <div class="aegis-logo-icon">A</div>
+        <span class="aegis-logo-text">AEGIS</span>
+      </a>
+      <nav class="aegis-nav">
+        <a href="setup.html">Setup</a>
+        <a href="checkin.html">Check-in</a>
+        <a href="guardian.html">Guardian</a>
+        <a href="verify.html" class="active">Verify</a>
+      </nav>
+    </header>
+
+    <main class="aegis-main">
+      <h1>Proof of Existence</h1>
+      <p class="subtitle">Verifiziere, dass Informationen zu einem bestimmten Zeitpunkt existiert haben.</p>
+
+      <!-- Hash a file -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">#️⃣ Datei hashen</h2>
+          <p class="card-desc">
+            Berechne den SHA-256-Hash einer Datei. Vergleiche ihn mit einem veröffentlichten 
+            Proof of Existence, um zu beweisen, dass die Datei unverändert ist.
+          </p>
+        </div>
+
+        <div class="upload-zone" id="hashUploadZone" style="padding: 32px;">
+          <div class="upload-zone-icon">📎</div>
+          <div class="upload-zone-text">Datei zum Hashen hierher ziehen</div>
+          <div class="upload-zone-hint">Die Datei wird lokal verarbeitet und nicht hochgeladen</div>
+          <input type="file" id="hashFileInput" style="display:none">
+        </div>
+
+        <div id="hashResult" class="hidden mt-6 animate-in">
+          <label class="form-label">SHA-256 Hash</label>
+          <div class="hash-display">
+            <button class="copy-btn" onclick="copyFileHash()">Kopieren</button>
+            <span id="fileHash">—</span>
+          </div>
+          <div class="text-sm text-muted mt-4" id="hashFileInfo">—</div>
+        </div>
+      </div>
+
+      <!-- Compare hashes -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">🔎 Hashes vergleichen</h2>
+          <p class="card-desc">
+            Vergleiche zwei SHA-256-Hashes, um zu prüfen ob sie übereinstimmen.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Hash 1 (z.B. veröffentlichter Proof)</label>
+          <input type="text" id="hash1" class="form-input form-input-mono" 
+                 placeholder="SHA-256 Hash einfügen..." oninput="compareHashes()">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Hash 2 (z.B. berechneter Hash)</label>
+          <input type="text" id="hash2" class="form-input form-input-mono" 
+                 placeholder="SHA-256 Hash einfügen..." oninput="compareHashes()">
+        </div>
+
+        <div id="compareResult" class="hidden">
+          <div id="matchResult" class="alert">
+            <span class="alert-icon" id="matchIcon"></span>
+            <span id="matchText"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verify AEGIS Package -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">📦 Paket-Integrität prüfen</h2>
+          <p class="card-desc">
+            Lade ein AEGIS-Paket und prüfe, ob der Combined Proof Hash mit einem 
+            veröffentlichten Hash übereinstimmt.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">AEGIS Paket-Datei</label>
+          <input type="file" id="verifyPackageFile" accept=".json" class="form-input">
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="verifyPackage()">
+          Paket prüfen
+        </button>
+
+        <div id="packageVerifyResult" class="hidden mt-6">
+          <div class="alert alert-info" id="packageInfo" style="display:none">
+            <span class="alert-icon">📦</span>
+            <div id="packageInfoText"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Section -->
+      <div class="card" style="background: var(--bg-input); border: none; box-shadow: none;">
+        <h3 class="card-title">Was ist Proof of Existence?</h3>
+        <p class="card-desc mt-4" style="line-height: 1.7;">
+          Ein Proof of Existence beweist, dass bestimmte Daten zu einem bestimmten 
+          Zeitpunkt existiert haben — ohne den Inhalt zu verraten. Dafür wird ein 
+          kryptografischer Hash (SHA-256) der Daten berechnet und öffentlich gepostet 
+          (z.B. auf Twitter, einem Blog, oder der Bitcoin-Blockchain via OpenTimestamps).
+          Jede noch so kleine Änderung an den Originaldaten erzeugt einen komplett 
+          anderen Hash. So kann jeder verifizieren, dass die Daten seit dem Posting 
+          nicht verändert wurden.
+        </p>
+      </div>
+
+    </main>
+
+    <footer class="aegis-footer">
+      AEGIS v1.0 — Keine Daten verlassen deinen Browser
+    </footer>
+
+  </div>
+
+  <script src="../js/crypto.js"></script>
+  <script>
+    'use strict';
+
+    // ─── File Hashing ───
+    const hashZone = document.getElementById('hashUploadZone');
+    const hashInput = document.getElementById('hashFileInput');
+
+    hashZone.addEventListener('click', () => hashInput.click());
+    hashZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      hashZone.classList.add('drag-over');
+    });
+    hashZone.addEventListener('dragleave', () => hashZone.classList.remove('drag-over'));
+    hashZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      hashZone.classList.remove('drag-over');
+      if (e.dataTransfer.files.length) hashFile(e.dataTransfer.files[0]);
+    });
+    hashInput.addEventListener('change', () => {
+      if (hashInput.files.length) hashFile(hashInput.files[0]);
+    });
+
+    async function hashFile(file) {
+      const buffer = await file.arrayBuffer();
+      const hash = await AegisCrypto.sha256(buffer);
+
+      document.getElementById('fileHash').textContent = hash;
+      document.getElementById('hashFileInfo').textContent = 
+        `${file.name} — ${formatSize(file.size)}`;
+      document.getElementById('hashResult').classList.remove('hidden');
+
+      // Auto-fill compare field
+      document.getElementById('hash2').value = hash;
+      compareHashes();
+    }
+
+    function copyFileHash() {
+      const hash = document.getElementById('fileHash').textContent;
+      navigator.clipboard.writeText(hash).then(() => {
+        const btn = document.querySelector('#hashResult .copy-btn');
+        btn.textContent = '✓ Kopiert';
+        setTimeout(() => btn.textContent = 'Kopieren', 2000);
+      });
+    }
+
+    // ─── Hash Comparison ───
+    function compareHashes() {
+      const h1 = document.getElementById('hash1').value.trim().toLowerCase();
+      const h2 = document.getElementById('hash2').value.trim().toLowerCase();
+
+      if (!h1 || !h2) {
+        document.getElementById('compareResult').classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('compareResult').classList.remove('hidden');
+      const result = document.getElementById('matchResult');
+      const icon = document.getElementById('matchIcon');
+      const text = document.getElementById('matchText');
+
+      if (h1 === h2) {
+        result.className = 'alert alert-success';
+        icon.textContent = '✅';
+        text.innerHTML = '<strong>Übereinstimmung!</strong> Die Hashes sind identisch. Die Daten wurden nicht verändert.';
+      } else {
+        result.className = 'alert alert-danger';
+        icon.textContent = '❌';
+        text.innerHTML = '<strong>Keine Übereinstimmung.</strong> Die Hashes unterscheiden sich. Die Daten wurden verändert oder es handelt sich um verschiedene Dateien.';
+      }
+    }
+
+    // ─── Package Verification ───
+    async function verifyPackage() {
+      const fileInput = document.getElementById('verifyPackageFile');
+      const resultDiv = document.getElementById('packageVerifyResult');
+      resultDiv.classList.remove('hidden');
+
+      const info = document.getElementById('packageInfo');
+      info.style.display = 'none';
+
+      if (!fileInput.files.length) return;
+
+      try {
+        const content = await fileInput.files[0].text();
+        const pkg = JSON.parse(content);
+
+        if (!pkg.aegis) throw new Error('Keine gültige AEGIS-Paketdatei.');
+
+        info.style.display = 'flex';
+        document.getElementById('packageInfoText').innerHTML = `
+          <strong>Paket-ID:</strong> ${pkg.id}<br>
+          <strong>Erstellt:</strong> ${new Date(pkg.created).toLocaleString('de-DE')}<br>
+          <strong>Version:</strong> ${pkg.version}<br>
+          <strong>Dateien:</strong> ${pkg.files?.length || 0}<br>
+          <strong>Combined Proof Hash:</strong><br>
+          <code class="mono" style="font-size: 11px; word-break: break-all;">${pkg.combinedProofHash}</code>
+        `;
+
+        // Auto-fill compare
+        document.getElementById('hash1').value = pkg.combinedProofHash;
+        compareHashes();
+
+      } catch (e) {
+        info.style.display = 'flex';
+        info.className = 'alert alert-danger';
+        document.getElementById('packageInfoText').textContent = 'Fehler: ' + e.message;
+      }
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+  </script>
+</body>
+</html>

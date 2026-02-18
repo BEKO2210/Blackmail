@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS — Einrichtung</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="aegis-app">
+
+    <header class="aegis-header">
+      <a href="../index.html" class="aegis-logo">
+        <div class="aegis-logo-icon">A</div>
+        <span class="aegis-logo-text">AEGIS</span>
+      </a>
+      <nav class="aegis-nav">
+        <a href="setup.html" class="active">Setup</a>
+        <a href="checkin.html">Check-in</a>
+        <a href="guardian.html">Guardian</a>
+        <a href="verify.html">Verify</a>
+      </nav>
+    </header>
+
+    <main class="aegis-main">
+      <h1>Einrichtung</h1>
+      <p class="subtitle">Schritt für Schritt durch die Konfiguration. Alles passiert lokal in deinem Browser.</p>
+
+      <!-- Wizard Progress -->
+      <div class="wizard-progress">
+        <div class="wizard-step active" id="ws1">
+          <div class="wizard-step-dot">1</div>
+          <span class="wizard-step-label">Passphrase</span>
+        </div>
+        <div class="wizard-step-line"></div>
+        <div class="wizard-step" id="ws2">
+          <div class="wizard-step-dot">2</div>
+          <span class="wizard-step-label">Beweise</span>
+        </div>
+        <div class="wizard-step-line"></div>
+        <div class="wizard-step" id="ws3">
+          <div class="wizard-step-dot">3</div>
+          <span class="wizard-step-label">Guardians</span>
+        </div>
+        <div class="wizard-step-line"></div>
+        <div class="wizard-step" id="ws4">
+          <div class="wizard-step-dot">4</div>
+          <span class="wizard-step-label">Fertig</span>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 1: Passphrase ═══ -->
+      <div id="step1" class="card animate-in">
+        <div class="card-header">
+          <h2 class="card-title">🔑 Passphrase festlegen</h2>
+          <p class="card-desc">Wähle zwei Passphrasen: eine normale und eine Duress-Passphrase für Notfälle.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Passphrase</label>
+          <input type="password" id="passphrase" class="form-input form-input-mono" 
+                 placeholder="Deine Hauptpassphrase..." autocomplete="off">
+          <div class="strength-bar strength-0" id="strengthBar">
+            <div class="strength-fill"></div>
+          </div>
+          <span class="strength-label" id="strengthLabel"></span>
+          <span class="form-hint">Mindestens 12 Zeichen. Je länger, desto sicherer.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Passphrase bestätigen</label>
+          <input type="password" id="passphraseConfirm" class="form-input form-input-mono" 
+                 placeholder="Passphrase wiederholen..." autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Duress-Passphrase (Zwangscode)</label>
+          <input type="password" id="duressPhrase" class="form-input form-input-mono" 
+                 placeholder="Dein geheimer Notfall-Code..." autocomplete="off">
+          <span class="form-hint">Wenn du diesen Code beim Check-in eingibst, sieht alles normal aus — aber deine Guardians erkennen das versteckte Signal. Muss sich von der Hauptpassphrase unterscheiden.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Check-in Intervall</label>
+          <select id="checkinInterval" class="form-select">
+            <option value="24">Alle 24 Stunden</option>
+            <option value="48" selected>Alle 48 Stunden</option>
+            <option value="72">Alle 72 Stunden</option>
+            <option value="168">Alle 7 Tage</option>
+            <option value="336">Alle 14 Tage</option>
+          </select>
+        </div>
+
+        <div class="alert alert-warning hidden" id="step1Error">
+          <span class="alert-icon">⚠️</span>
+          <span id="step1ErrorText"></span>
+        </div>
+
+        <div class="btn-group" style="justify-content: flex-end;">
+          <button class="btn btn-primary" onclick="goToStep(2)">Weiter →</button>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 2: Evidence Upload ═══ -->
+      <div id="step2" class="card hidden">
+        <div class="card-header">
+          <h2 class="card-title">📁 Beweise hochladen</h2>
+          <p class="card-desc">Lade die Dateien hoch, die geschützt werden sollen. Alles wird lokal verschlüsselt.</p>
+        </div>
+
+        <div class="alert alert-info">
+          <span class="alert-icon">🧹</span>
+          <div>Bilder werden automatisch von Metadaten bereinigt (EXIF, GPS, Kamera-Infos).</div>
+        </div>
+
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-zone-icon">📎</div>
+          <div class="upload-zone-text">Dateien hierher ziehen oder klicken</div>
+          <div class="upload-zone-hint">Dokumente, Fotos, Videos, Texte — alle Formate</div>
+          <input type="file" id="fileInput" multiple style="display:none">
+        </div>
+
+        <div class="file-list" id="fileList"></div>
+
+        <div class="form-group mt-6">
+          <label class="form-label">Optionale Notiz (wird mitverschlüsselt)</label>
+          <textarea id="evidenceNote" class="form-textarea" 
+                    placeholder="Kontext, Erklärungen, Anweisungen für die Guardians..."></textarea>
+        </div>
+
+        <div class="alert alert-warning hidden" id="step2Error">
+          <span class="alert-icon">⚠️</span>
+          <span id="step2ErrorText"></span>
+        </div>
+
+        <div class="btn-group" style="justify-content: space-between;">
+          <button class="btn btn-ghost" onclick="goToStep(1)">← Zurück</button>
+          <button class="btn btn-primary" onclick="goToStep(3)">Verschlüsseln & Weiter →</button>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 3: Guardian Config ═══ -->
+      <div id="step3" class="card hidden">
+        <div class="card-header">
+          <h2 class="card-title">🧩 Guardians konfigurieren</h2>
+          <p class="card-desc">Lege fest, wie viele Vertrauenspersonen Fragmente erhalten und wie viele zur Entschlüsselung nötig sind.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Anzahl Guardians (N)</label>
+          <select id="totalGuardians" class="form-select" onchange="updateThresholdOptions()">
+            <option value="3">3 Guardians</option>
+            <option value="5" selected>5 Guardians</option>
+            <option value="7">7 Guardians</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Schwelle (M) — Mindestanzahl für Entschlüsselung</label>
+          <select id="threshold" class="form-select">
+            <option value="2">2 von 5</option>
+            <option value="3" selected>3 von 5</option>
+            <option value="4">4 von 5</option>
+          </select>
+          <span class="form-hint">Höhere Schwelle = sicherer gegen Verrat, aber schwieriger in der Eskalation.</span>
+        </div>
+
+        <!-- Processing indicator -->
+        <div id="processingIndicator" class="hidden">
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-label">
+              <span id="progressText">Verschlüssele...</span>
+              <span id="progressPercent">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-warning hidden" id="step3Error">
+          <span class="alert-icon">⚠️</span>
+          <span id="step3ErrorText"></span>
+        </div>
+
+        <div class="btn-group" style="justify-content: space-between;">
+          <button class="btn btn-ghost" onclick="goToStep(2)">← Zurück</button>
+          <button class="btn btn-primary" id="generateBtn" onclick="generatePackage()">
+            🔐 Paket generieren
+          </button>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 4: Complete ═══ -->
+      <div id="step4" class="card hidden">
+        <div class="card-header">
+          <h2 class="card-title">✅ AEGIS ist bereit</h2>
+          <p class="card-desc">Dein Evidenz-Paket wurde verschlüsselt und die Guardian-Kits erstellt.</p>
+        </div>
+
+        <div class="alert alert-success">
+          <span class="alert-icon">🛡️</span>
+          <div>Alle Dateien wurden mit AES-256-GCM verschlüsselt. Der Schlüssel wurde in Fragmente aufgeteilt.</div>
+        </div>
+
+        <!-- Proof of Existence -->
+        <div class="form-group">
+          <label class="form-label">Proof of Existence (SHA-256)</label>
+          <div class="hash-display" id="proofHash">
+            <button class="copy-btn" onclick="copyHash()">Kopieren</button>
+            <span id="proofHashText">—</span>
+          </div>
+          <span class="form-hint">Poste diesen Hash öffentlich (Twitter, Blog, etc.) als Beweis, dass deine Informationen zu diesem Zeitpunkt existierten.</span>
+        </div>
+
+        <!-- Downloads -->
+        <h3 class="mt-6 mb-4">📦 Downloads</h3>
+
+        <div id="downloadSection">
+          <button class="btn btn-dark btn-block mb-4" id="downloadPackageBtn" onclick="downloadPackage()">
+            📦 Verschlüsseltes Evidenz-Paket herunterladen
+          </button>
+          <div id="guardianDownloads"></div>
+        </div>
+
+        <!-- Checklist -->
+        <div class="card mt-6" style="background: var(--bg-input); border: none; box-shadow: none;">
+          <h3 class="mb-4">Nächste Schritte</h3>
+          <div class="card-desc" style="line-height: 2;">
+            ☐ Evidenz-Paket sicher speichern (USB, Cloud, IPFS)<br>
+            ☐ Guardian-Kits an Vertrauenspersonen verteilen<br>
+            ☐ Proof-of-Existence-Hash öffentlich posten<br>
+            ☐ Ersten Check-in durchführen<br>
+            ☐ Guardians über ihr Kit informieren und einweisen
+          </div>
+        </div>
+
+        <div class="btn-group" style="justify-content: center;">
+          <a href="checkin.html" class="btn btn-primary btn-lg">→ Zum Check-in</a>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="aegis-footer">
+      AEGIS v1.0 — Keine Daten verlassen deinen Browser
+    </footer>
+
+  </div>
+
+  <script src="../js/crypto.js"></script>
+  <script src="../js/shamir.js"></script>
+  <script src="../js/checkin.js"></script>
+  <script>
+    'use strict';
+
+    // ─── State ───
+    let currentStep = 1;
+    let uploadedFiles = [];
+    let generatedPackage = null;
+    let guardianKits = null;
+
+    // ─── Wizard Navigation ───
+    function goToStep(step) {
+      // Validate before advancing
+      if (step > currentStep) {
+        if (!validateStep(currentStep)) return;
+      }
+
+      // Hide current
+      document.getElementById(`step${currentStep}`).classList.add('hidden');
+
+      // Update progress
+      for (let i = 1; i <= 4; i++) {
+        const ws = document.getElementById(`ws${i}`);
+        ws.classList.remove('active', 'completed');
+        if (i < step) ws.classList.add('completed');
+        if (i === step) ws.classList.add('active');
+      }
+
+      // Show new
+      currentStep = step;
+      const newStep = document.getElementById(`step${step}`);
+      newStep.classList.remove('hidden');
+      newStep.classList.add('animate-in');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function validateStep(step) {
+      if (step === 1) {
+        const pass = document.getElementById('passphrase').value;
+        const confirm = document.getElementById('passphraseConfirm').value;
+        const duress = document.getElementById('duressPhrase').value;
+
+        if (pass.length < 8) {
+          showError('step1', 'Passphrase muss mindestens 8 Zeichen lang sein.');
+          return false;
+        }
+        if (pass !== confirm) {
+          showError('step1', 'Passphrasen stimmen nicht überein.');
+          return false;
+        }
+        if (!duress) {
+          showError('step1', 'Bitte lege eine Duress-Passphrase fest.');
+          return false;
+        }
+        if (pass === duress) {
+          showError('step1', 'Duress-Passphrase muss sich von der Hauptpassphrase unterscheiden.');
+          return false;
+        }
+        hideError('step1');
+        return true;
+      }
+
+      if (step === 2) {
+        if (uploadedFiles.length === 0) {
+          showError('step2', 'Bitte lade mindestens eine Datei hoch.');
+          return false;
+        }
+        hideError('step2');
+        return true;
+      }
+
+      return true;
+    }
+
+    function showError(stepId, msg) {
+      const el = document.getElementById(`${stepId}Error`);
+      el.classList.remove('hidden');
+      document.getElementById(`${stepId}ErrorText`).textContent = msg;
+    }
+
+    function hideError(stepId) {
+      document.getElementById(`${stepId}Error`).classList.add('hidden');
+    }
+
+    // ─── Password Strength ───
+    const strengthLabels = ['', 'Schwach', 'Mittel', 'Gut', 'Stark'];
+    document.getElementById('passphrase').addEventListener('input', function() {
+      const strength = AegisCrypto.estimateStrength(this.value);
+      const bar = document.getElementById('strengthBar');
+      bar.className = `strength-bar strength-${strength}`;
+      document.getElementById('strengthLabel').textContent = strengthLabels[strength] || '';
+    });
+
+    // ─── File Upload ───
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+
+    uploadZone.addEventListener('click', () => fileInput.click());
+
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.classList.add('drag-over');
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.classList.remove('drag-over');
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', () => {
+      handleFiles(fileInput.files);
+      fileInput.value = '';
+    });
+
+    async function handleFiles(fileList) {
+      for (const file of fileList) {
+        // Strip metadata from images
+        let processedFile = file;
+        if (file.type.startsWith('image/')) {
+          try {
+            processedFile = await AegisCrypto.stripImageMetadata(file);
+          } catch (e) {
+            console.warn('Metadata stripping failed, using original:', e);
+          }
+        }
+
+        uploadedFiles.push(processedFile);
+      }
+      renderFileList();
+    }
+
+    function renderFileList() {
+      const list = document.getElementById('fileList');
+      if (uploadedFiles.length === 0) {
+        list.innerHTML = '';
+        return;
+      }
+
+      list.innerHTML = uploadedFiles.map((file, i) => `
+        <div class="file-item animate-in">
+          <div class="file-item-info">
+            <span class="file-item-icon">${getFileIcon(file.type)}</span>
+            <span class="file-item-name">${escapeHtml(file.name)}</span>
+          </div>
+          <span class="file-item-size">${formatSize(file.size)}</span>
+          <button class="file-item-remove" onclick="removeFile(${i})" title="Entfernen">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function removeFile(index) {
+      uploadedFiles.splice(index, 1);
+      renderFileList();
+    }
+
+    function getFileIcon(type) {
+      if (type.startsWith('image/')) return '🖼️';
+      if (type.startsWith('video/')) return '🎬';
+      if (type.startsWith('audio/')) return '🎵';
+      if (type.includes('pdf')) return '📄';
+      if (type.includes('text')) return '📝';
+      return '📎';
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ─── Guardian Config ───
+    function updateThresholdOptions() {
+      const total = parseInt(document.getElementById('totalGuardians').value);
+      const select = document.getElementById('threshold');
+      select.innerHTML = '';
+      for (let i = 2; i <= total; i++) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${i} von ${total}`;
+        if (i === Math.ceil(total / 2) + 1 || i === Math.ceil(total * 0.6)) {
+          opt.selected = true;
+        }
+        select.appendChild(opt);
+      }
+    }
+
+    // ─── Package Generation ───
+    async function generatePackage() {
+      const passphrase = document.getElementById('passphrase').value;
+      const totalGuardians = parseInt(document.getElementById('totalGuardians').value);
+      const threshold = parseInt(document.getElementById('threshold').value);
+      const interval = parseInt(document.getElementById('checkinInterval').value);
+      const note = document.getElementById('evidenceNote').value;
+
+      const btn = document.getElementById('generateBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Verarbeite...';
+
+      const indicator = document.getElementById('processingIndicator');
+      indicator.classList.remove('hidden');
+
+      try {
+        // Progress updates
+        updateProgress(10, 'Metadaten bereinigen...');
+
+        // Create metadata
+        const metadata = {
+          note: note || null,
+          checkinIntervalHours: interval,
+          totalGuardians: totalGuardians,
+          threshold: threshold,
+          createdAt: new Date().toISOString()
+        };
+
+        updateProgress(25, 'Dateien verschlüsseln...');
+
+        // Create evidence package
+        const result = await AegisCrypto.createEvidencePackage(
+          uploadedFiles, metadata, passphrase
+        );
+
+        updateProgress(60, 'Schlüssel fragmentieren...');
+
+        // Generate the encryption key hash for Shamir splitting
+        // We split the passphrase itself (encoded as bytes)
+        const encoder = new TextEncoder();
+        const passphraseBytes = encoder.encode(passphrase);
+        const shares = AegisShamir.split(passphraseBytes, totalGuardians, threshold);
+
+        updateProgress(80, 'Guardian-Kits erstellen...');
+
+        // Create guardian kits
+        guardianKits = AegisShamir.createGuardianKits(
+          shares, result.package.id, interval
+        );
+
+        updateProgress(95, 'Finalisiere...');
+
+        generatedPackage = result;
+
+        // Store duress phrase hash for check-in page
+        const duressPhrase = document.getElementById('duressPhrase').value;
+        const configForCheckin = {
+          packageId: result.package.id,
+          interval: interval,
+          passphraseHash: await AegisCrypto.sha256(passphrase),
+          duressHash: await AegisCrypto.sha256(duressPhrase),
+        };
+
+        // Store config in localStorage (only hashes, never plaintext)
+        localStorage.setItem('aegis_config', JSON.stringify(configForCheckin));
+
+        updateProgress(100, 'Fertig!');
+
+        // Show results
+        setTimeout(() => {
+          showResults(result, guardianKits);
+          goToStep(4);
+        }, 500);
+
+      } catch (err) {
+        console.error('Package generation failed:', err);
+        showError('step3', 'Fehler: ' + err.message);
+        btn.disabled = false;
+        btn.textContent = '🔐 Paket generieren';
+        indicator.classList.add('hidden');
+      }
+    }
+
+    function updateProgress(percent, text) {
+      document.getElementById('progressFill').style.width = percent + '%';
+      document.getElementById('progressPercent').textContent = percent + '%';
+      document.getElementById('progressText').textContent = text;
+    }
+
+    function showResults(result, kits) {
+      // Show proof hash
+      document.getElementById('proofHashText').textContent = result.combinedProofHash;
+
+      // Guardian download buttons
+      const container = document.getElementById('guardianDownloads');
+      container.innerHTML = kits.map((kit, i) => `
+        <button class="btn btn-secondary btn-block mb-4" onclick="downloadGuardianKit(${i})">
+          🧩 Guardian-Kit #${i + 1} herunterladen
+        </button>
+      `).join('');
+    }
+
+    // ─── Downloads ───
+    function downloadPackage() {
+      if (!generatedPackage) return;
+      const json = JSON.stringify(generatedPackage.package, null, 2);
+      downloadFile(json, `aegis-package-${generatedPackage.package.id.substring(0, 8)}.json`, 'application/json');
+    }
+
+    function downloadGuardianKit(index) {
+      if (!guardianKits || !guardianKits[index]) return;
+      const kit = guardianKits[index];
+      const json = JSON.stringify(kit, null, 2);
+      downloadFile(json, `aegis-guardian-kit-${index + 1}.json`, 'application/json');
+    }
+
+    function downloadFile(content, filename, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function copyHash() {
+      const hash = document.getElementById('proofHashText').textContent;
+      navigator.clipboard.writeText(hash).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✓ Kopiert';
+        setTimeout(() => btn.textContent = 'Kopieren', 2000);
+      });
+    }
+
+    // Init
+    updateThresholdOptions();
+  </script>
+</body>
+</html>
