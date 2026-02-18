@@ -122,6 +122,115 @@ body {
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--text-primary);
+  position: relative;
+  display: inline-block;
+}
+
+/* Glitch effect — subtle, professional */
+.aegis-logo-text::before,
+.aegis-logo-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.aegis-logo-text::before {
+  color: #06b6d4;
+  animation: glitch-before 8s infinite;
+}
+
+.aegis-logo-text::after {
+  color: #3b82f6;
+  animation: glitch-after 8s infinite;
+}
+
+@keyframes glitch-before {
+  0%, 89%, 100% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: none;
+  }
+  90% {
+    opacity: 0.8;
+    transform: translate(-2px, -1px);
+    clip-path: inset(20% 0 40% 0);
+  }
+  91% {
+    opacity: 0.6;
+    transform: translate(2px, 1px);
+    clip-path: inset(60% 0 5% 0);
+  }
+  92% {
+    opacity: 0.8;
+    transform: translate(-1px, 0);
+    clip-path: inset(10% 0 70% 0);
+  }
+  93% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: none;
+  }
+}
+
+@keyframes glitch-after {
+  0%, 89%, 100% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: none;
+  }
+  90% {
+    opacity: 0.6;
+    transform: translate(2px, 1px);
+    clip-path: inset(50% 0 15% 0);
+  }
+  91% {
+    opacity: 0.8;
+    transform: translate(-2px, -1px);
+    clip-path: inset(5% 0 50% 0);
+  }
+  92% {
+    opacity: 0.6;
+    transform: translate(1px, 0);
+    clip-path: inset(40% 0 20% 0);
+  }
+  93% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: none;
+  }
+}
+
+/* Subtle text flicker on the main text itself */
+.aegis-logo:hover .aegis-logo-text::before {
+  animation: glitch-hover-before 0.3s linear;
+  opacity: 0.8;
+}
+
+.aegis-logo:hover .aegis-logo-text::after {
+  animation: glitch-hover-after 0.3s linear;
+  opacity: 0.6;
+}
+
+@keyframes glitch-hover-before {
+  0% { clip-path: inset(30% 0 40% 0); transform: translate(-2px, -1px); opacity: 0.8; }
+  25% { clip-path: inset(10% 0 60% 0); transform: translate(2px, 0); opacity: 0.6; }
+  50% { clip-path: inset(50% 0 10% 0); transform: translate(-1px, 1px); opacity: 0.8; }
+  75% { clip-path: inset(20% 0 50% 0); transform: translate(1px, -1px); opacity: 0.6; }
+  100% { clip-path: none; transform: translate(0); opacity: 0; }
+}
+
+@keyframes glitch-hover-after {
+  0% { clip-path: inset(50% 0 20% 0); transform: translate(2px, 1px); opacity: 0.6; }
+  25% { clip-path: inset(70% 0 5% 0); transform: translate(-1px, 0); opacity: 0.8; }
+  50% { clip-path: inset(5% 0 70% 0); transform: translate(2px, -1px); opacity: 0.6; }
+  75% { clip-path: inset(40% 0 30% 0); transform: translate(-2px, 1px); opacity: 0.8; }
+  100% { clip-path: none; transform: translate(0); opacity: 0; }
 }
 
 /* ─── Hamburger Toggle ─── */
