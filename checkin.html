@@ -114,6 +114,49 @@
         </div>
       </div>
 
+      <!-- GitHub Automated Heartbeat Card -->
+      <div class="card mt-6" id="githubCard">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <h3 class="card-title" data-i18n="github.title">Automated Monitoring</h3>
+          <span class="github-status-badge disconnected" id="githubBadge">
+            <span class="github-status-dot"></span>
+            <span id="githubBadgeText" data-i18n="github.status.inactive">Not configured</span>
+          </span>
+        </div>
+        <p class="card-desc mb-4" data-i18n="github.desc">Optionally update the GitHub heartbeat to enable automated guardian notifications.</p>
+
+        <div id="githubNotConfigured">
+          <div class="alert alert-info">
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg></span>
+            <div data-i18n="github.notconfigured">GitHub automation is not configured. <a href="setup.html" style="color: inherit; font-weight: 600;">Configure in Setup</a> to enable automated guardian notifications.</div>
+          </div>
+        </div>
+
+        <div id="githubConfigured" style="display:none">
+          <div class="alert alert-success" id="githubStatusAlert">
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></span>
+            <div><span data-i18n="github.connected">Connected to</span> <strong id="githubRepoName" class="mono"></strong></div>
+          </div>
+
+          <button class="btn btn-primary btn-block" id="githubCheckinBtn">
+            <svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+            <span data-i18n="github.btn">Update Heartbeat on GitHub</span>
+          </button>
+
+          <div class="alert alert-success hidden mt-4" id="githubSuccess">
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></span>
+            <div id="githubSuccessText"></div>
+          </div>
+
+          <div class="alert alert-danger hidden mt-4" id="githubError">
+            <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+            <div id="githubErrorText"></div>
+          </div>
+
+          <div class="form-hint mt-4" data-i18n="github.hint">This updates the heartbeat timestamp in your repository. The GitHub Actions workflow monitors this and notifies guardians if check-ins stop.</div>
+        </div>
+      </div>
+
       <!-- History Card -->
       <div class="card mt-6" id="historyCard">
         <h3 class="card-title" data-i18n="checkin.history.title">Recent Check-ins</h3>
@@ -137,6 +180,7 @@
   <script src="js/icons.js"></script>
   <script src="js/crypto.js"></script>
   <script src="js/checkin.js"></script>
+  <script src="js/github-checkin.js"></script>
   <script src="js/lang.js"></script>
   <script src="js/main.js"></script>
   <script>
@@ -154,12 +198,57 @@
       if (!stored) {
         document.getElementById('noConfigAlert').style.display = 'flex';
         renderHistory();
+        initGitHubCard();
         return;
       }
       config = JSON.parse(stored);
       updateStatusCard();
       renderHistory();
       updateButtonLabels();
+      initGitHubCard();
+    }
+
+    function initGitHubCard() {
+      if (AegisGitHub.isConfigured()) {
+        document.getElementById('githubNotConfigured').style.display = 'none';
+        document.getElementById('githubConfigured').style.display = '';
+        var ghConfig = AegisGitHub.getConfig();
+        document.getElementById('githubRepoName').textContent = ghConfig.owner + '/' + ghConfig.repo;
+        var badge = document.getElementById('githubBadge');
+        badge.classList.remove('disconnected');
+        document.getElementById('githubBadgeText').textContent = AegisLang.t('github.status.active');
+        badge.querySelector('.github-status-dot').classList.add('heartbeat-pulse');
+      } else {
+        document.getElementById('githubNotConfigured').style.display = '';
+        document.getElementById('githubConfigured').style.display = 'none';
+      }
+    }
+
+    document.getElementById('githubCheckinBtn').addEventListener('click', function() {
+      doGitHubHeartbeat();
+    });
+
+    async function doGitHubHeartbeat() {
+      var btn = document.getElementById('githubCheckinBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="aegis-icon" style="animation: spin 1s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> ' + AegisLang.t('github.updating');
+
+      document.getElementById('githubSuccess').classList.add('hidden');
+      document.getElementById('githubError').classList.add('hidden');
+
+      var result = await AegisGitHub.performHeartbeat();
+
+      btn.disabled = false;
+      btn.innerHTML = '<svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> ' + AegisLang.t('github.btn');
+
+      if (result.success) {
+        document.getElementById('githubSuccess').classList.remove('hidden');
+        var locale = AegisLang.getLocale();
+        document.getElementById('githubSuccessText').textContent = AegisLang.t('github.success') + ' ' + new Date(result.timestamp).toLocaleString(locale);
+      } else {
+        document.getElementById('githubError').classList.remove('hidden');
+        document.getElementById('githubErrorText').textContent = AegisLang.t('github.error') + ' ' + result.error;
+      }
     }
 
     function updateButtonLabels() {
@@ -276,6 +365,11 @@
       updateStatusCard();
       document.getElementById('checkinPass').value = '';
       document.getElementById('tokenResult').scrollIntoView({ behavior: 'smooth' });
+
+      // Auto-trigger GitHub heartbeat if configured
+      if (AegisGitHub.isConfigured()) {
+        doGitHubHeartbeat();
+      }
     }
 
     function showCheckinError(msg) {

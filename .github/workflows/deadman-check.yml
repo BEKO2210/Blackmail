@@ -1,0 +1,242 @@
+name: AEGIS Dead Man's Switch Monitor
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  check-heartbeat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check heartbeat and manage escalation
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // ── 1. Read heartbeat.json ──
+            let heartbeat;
+            try {
+              heartbeat = JSON.parse(fs.readFileSync('heartbeat.json', 'utf8'));
+            } catch (e) {
+              core.warning('heartbeat.json not found or invalid. Skipping.');
+              return;
+            }
+
+            if (!heartbeat.aegis_heartbeat) {
+              core.warning('Not a valid AEGIS heartbeat file.');
+              return;
+            }
+
+            // Not yet activated
+            if (!heartbeat.last_checkin || heartbeat.escalation_state === 'INACTIVE') {
+              core.info('Heartbeat not yet activated. No check-ins recorded.');
+              return;
+            }
+
+            // ── 2. Calculate elapsed time ──
+            const lastCheckin = new Date(heartbeat.last_checkin);
+            const now = new Date();
+            const elapsedMs = now - lastCheckin;
+            const elapsedHours = elapsedMs / (1000 * 60 * 60);
+            const intervalHours = heartbeat.interval_hours || 48;
+            const missedIntervals = Math.floor(elapsedHours / intervalHours);
+
+            core.info(`Last check-in: ${lastCheckin.toISOString()}`);
+            core.info(`Elapsed: ${elapsedHours.toFixed(1)}h | Interval: ${intervalHours}h | Missed: ${missedIntervals}`);
+
+            // ── 3. Determine escalation level ──
+            let level = 'OK';
+            if (missedIntervals >= 3) level = 'CRITICAL';
+            else if (missedIntervals >= 2) level = 'ALERT';
+            else if (missedIntervals >= 1) level = 'WARNING';
+
+            core.info(`Escalation level: ${level}`);
+
+            // ── 4. Build guardian strings ──
+            const guardians = heartbeat.guardians || [];
+            const mentions = guardians.map(g => `@${g.github}`).join(' ');
+            const guardianList = guardians.map(g => `- **${g.label}** (@${g.github})`).join('\n');
+            const siteUrl = heartbeat.site_url || '';
+            const guardianPageUrl = siteUrl ? siteUrl.replace(/\/$/, '') + '/guardian.html' : '';
+
+            // ── 5. Find existing open AEGIS alert issues ──
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'aegis-alert',
+              per_page: 10
+            });
+
+            // ── 6. If OK → close all open alerts ──
+            if (level === 'OK') {
+              for (const issue of existingIssues) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `## ✅ Resolved\n\nCheck-in received at \`${lastCheckin.toISOString()}\`. All clear.\n\n${mentions}`
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  state: 'closed',
+                  state_reason: 'completed'
+                });
+                core.info(`Closed issue #${issue.number}`);
+              }
+
+              if (heartbeat.escalation_state !== 'OK') {
+                heartbeat.escalation_state = 'OK';
+                fs.writeFileSync('heartbeat.json', JSON.stringify(heartbeat, null, 2) + '\n');
+              }
+              return;
+            }
+
+            // ── 7. Build issue content ──
+            const levelConfig = {
+              WARNING: {
+                emoji: '⚠️',
+                color: 'FBCA04',
+                instructions: [
+                  'Try to contact the person through known channels.',
+                  'Do **NOT** assemble fragments yet.',
+                  'Monitor for the next check-in.',
+                  'If you receive a check-in token, verify it on the Guardian page.'
+                ]
+              },
+              ALERT: {
+                emoji: '🔴',
+                color: 'D93F0B',
+                instructions: [
+                  'Contact all other guardians immediately.',
+                  'Attempt all known contact methods with the person.',
+                  'Prepare your guardian kit for potential fragment assembly.',
+                  'Do **NOT** assemble fragments yet unless all guardians agree.'
+                ]
+              },
+              CRITICAL: {
+                emoji: '🚨',
+                color: 'B60205',
+                instructions: [
+                  '**IMMEDIATELY** contact all other guardians.',
+                  'Begin coordinating fragment assembly.',
+                  guardianPageUrl ? `Go to the [Guardian Dashboard](${guardianPageUrl}) to assemble fragments.` : 'Open the Guardian Dashboard to assemble fragments.',
+                  'Follow the escalation plan in your guardian kit instructions.',
+                  'If you suspect duress, act according to your instructions.'
+                ]
+              }
+            };
+
+            const cfg = levelConfig[level];
+            const title = `AEGIS ${level}: Check-in overdue (${missedIntervals}x interval missed)`;
+            const instructions = cfg.instructions.map(s => `- ${s}`).join('\n');
+
+            const issueBody = [
+              `## ${cfg.emoji} AEGIS Dead Man's Switch — ${level}`,
+              '',
+              `| Detail | Value |`,
+              `|--------|-------|`,
+              `| **Last check-in** | \`${lastCheckin.toISOString()}\` |`,
+              `| **Expected interval** | Every ${intervalHours} hours |`,
+              `| **Missed intervals** | ${missedIntervals} |`,
+              `| **Hours since last check-in** | ${elapsedHours.toFixed(1)} |`,
+              '',
+              '---',
+              '',
+              '### Guardians',
+              guardianList,
+              '',
+              '### Required Action',
+              instructions,
+              '',
+              '---',
+              guardianPageUrl ? `**Guardian Dashboard:** [${guardianPageUrl}](${guardianPageUrl})` : '',
+              '',
+              `*Automatically created by the AEGIS Dead Man's Switch monitor.*`,
+              `*${mentions}*`
+            ].join('\n');
+
+            // ── 8. Ensure labels exist ──
+            const labelsToCreate = [
+              { name: 'aegis-alert', color: 'B60205', description: "AEGIS Dead Man's Switch alert" },
+              { name: `aegis-${level.toLowerCase()}`, color: cfg.color, description: `AEGIS ${level} level` }
+            ];
+            for (const lbl of labelsToCreate) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ...lbl
+                });
+              } catch (e) { /* label may already exist */ }
+            }
+
+            // ── 9. Create or update issue ──
+            if (existingIssues.length > 0) {
+              const latest = existingIssues[0];
+              const match = latest.title.match(/AEGIS (WARNING|ALERT|CRITICAL)/);
+              const prevLevel = match ? match[1] : null;
+
+              if (prevLevel !== level) {
+                // Escalation changed → update issue
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: latest.number,
+                  title: title,
+                  labels: ['aegis-alert', `aegis-${level.toLowerCase()}`]
+                });
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: latest.number,
+                  body: `## Escalation: ${prevLevel} → ${level}\n\n${issueBody}`
+                });
+                core.info(`Escalated issue #${latest.number}: ${prevLevel} → ${level}`);
+              } else {
+                // Same level → status update comment
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: latest.number,
+                  body: `### Status Update (${now.toISOString()})\n\nStill **${level}**. ${elapsedHours.toFixed(1)}h since last check-in (${missedIntervals}x missed).\n\n${mentions}`
+                });
+                core.info(`Status update on issue #${latest.number}`);
+              }
+            } else {
+              // Create new issue
+              const { data: newIssue } = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: issueBody,
+                labels: ['aegis-alert', `aegis-${level.toLowerCase()}`]
+              });
+              core.info(`Created issue #${newIssue.number}`);
+            }
+
+            // ── 10. Update escalation state in heartbeat ──
+            if (heartbeat.escalation_state !== level) {
+              heartbeat.escalation_state = level;
+              fs.writeFileSync('heartbeat.json', JSON.stringify(heartbeat, null, 2) + '\n');
+            }
+
+      - name: Commit escalation state update
+        run: |
+          git config user.name "AEGIS Bot"
+          git config user.email "aegis-bot@users.noreply.github.com"
+          git add heartbeat.json
+          git diff --cached --quiet || git commit -m "AEGIS: update escalation state [skip ci]"
+          git push || true
