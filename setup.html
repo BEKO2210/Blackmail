@@ -255,6 +255,74 @@
           </div>
         </div>
 
+        <!-- GitHub Automation Setup (Optional) -->
+        <div class="card mt-6" id="githubSetupCard">
+          <h3 class="card-title" data-i18n="setup.github.title">Automated Monitoring (Optional)</h3>
+          <p class="card-desc mb-4" data-i18n="setup.github.desc">Enable automated guardian notifications via GitHub. When you miss a check-in, your guardians will be automatically notified via GitHub Issues.</p>
+
+          <details class="github-howto-details" id="githubSetupDetails">
+            <summary data-i18n="setup.github.toggle">Configure GitHub Automation</summary>
+            <div class="github-config-card">
+
+              <div class="alert alert-info mb-4">
+                <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg></span>
+                <div data-i18n="setup.github.info">This requires a GitHub account and a Fine-Grained Personal Access Token (PAT) with <strong>Contents: Read and write</strong> permission for the repository hosting this site. Your PAT is stored only in your browser's localStorage and is sent exclusively to api.github.com.</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" data-i18n="setup.github.owner.label">GitHub Username / Organization</label>
+                <input type="text" id="ghOwner" class="form-input mono" placeholder="your-username" autocomplete="off">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" data-i18n="setup.github.repo.label">Repository Name</label>
+                <input type="text" id="ghRepo" class="form-input mono" placeholder="aegis" autocomplete="off">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" data-i18n="setup.github.pat.label">Personal Access Token (Fine-Grained)</label>
+                <input type="password" id="ghPat" class="form-input mono" placeholder="github_pat_..." autocomplete="off">
+                <span class="form-hint" data-i18n="setup.github.pat.hint">Create at Settings &gt; Developer settings &gt; Fine-grained tokens. Scope to this repository only, grant "Contents: Read and write" permission.</span>
+                <details class="github-howto-details">
+                  <summary data-i18n="setup.github.howto.title">How to create a Fine-Grained PAT</summary>
+                  <div class="howto-steps" data-i18n="setup.github.howto.steps">1. Go to github.com &gt; Settings &gt; Developer settings &gt; Personal access tokens &gt; Fine-grained tokens. 2. Click "Generate new token". 3. Set a name (e.g. "AEGIS Heartbeat"). 4. Under "Repository access", select "Only select repositories" and choose this repository. 5. Under "Permissions", expand "Repository permissions" and set "Contents" to "Read and write". 6. Click "Generate token" and copy it here.</div>
+                </details>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" data-i18n="setup.github.siteurl.label">Site URL (GitHub Pages)</label>
+                <input type="text" id="ghSiteUrl" class="form-input mono" placeholder="https://username.github.io/aegis/" autocomplete="off">
+                <span class="form-hint" data-i18n="setup.github.siteurl.hint">The URL where this AEGIS site is hosted. Used in notification links for guardians.</span>
+              </div>
+
+              <h4 class="mt-6 mb-4" data-i18n="setup.github.guardians.title">Guardian GitHub Usernames</h4>
+              <p class="card-desc mb-4" data-i18n="setup.github.guardians.desc">Enter the GitHub usernames of your guardians. They will be @mentioned in notification issues and should watch this repository.</p>
+              <div id="ghGuardianInputs"></div>
+
+              <div class="alert alert-danger hidden mt-4" id="githubSetupError">
+                <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+                <span id="githubSetupErrorText"></span>
+              </div>
+
+              <div class="alert alert-success hidden mt-4" id="githubSetupSuccess">
+                <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></span>
+                <span id="githubSetupSuccessText"></span>
+              </div>
+
+              <div class="btn-group mt-4">
+                <button class="btn btn-secondary" id="ghTestBtn" onclick="testGitHubConnection()">
+                  <svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                  <span data-i18n="setup.github.test">Test Connection</span>
+                </button>
+                <button class="btn btn-primary" id="ghSaveBtn" onclick="saveGitHubConfig()">
+                  <svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  <span data-i18n="setup.github.saved">Save Configuration</span>
+                </button>
+              </div>
+            </div>
+          </details>
+        </div>
+
         <div class="btn-group" style="justify-content: center;">
           <a href="checkin.html" class="btn btn-primary btn-lg">&#x2192; <span data-i18n="setup.step4.goto.checkin">Go to Check-in</span></a>
         </div>
@@ -279,6 +347,7 @@
   <script src="js/crypto.js"></script>
   <script src="js/shamir.js"></script>
   <script src="js/checkin.js"></script>
+  <script src="js/github-checkin.js"></script>
   <script src="js/lang.js"></script>
   <script src="js/main.js"></script>
   <script>
@@ -540,6 +609,122 @@
       refreshDynamicContent();
     });
 
+    /* ── GitHub Automation Config ── */
+
+    function populateGuardianGitHubInputs() {
+      var total = parseInt(document.getElementById('totalGuardians').value) || 3;
+      var container = document.getElementById('ghGuardianInputs');
+      if (!container) return;
+      container.innerHTML = '';
+      for (var i = 0; i < total; i++) {
+        container.innerHTML +=
+          '<div class="form-group">' +
+            '<label class="form-label">' + AegisLang.t('setup.github.guardian.label') + ' #' + (i + 1) + '</label>' +
+            '<input type="text" class="form-input mono gh-guardian-input" placeholder="github-username" autocomplete="off" data-index="' + i + '">' +
+          '</div>';
+      }
+      // Pre-fill from existing config
+      var existingConfig = AegisGitHub.getConfig();
+      if (existingConfig && existingConfig.guardians) {
+        var inputs = container.querySelectorAll('.gh-guardian-input');
+        for (var j = 0; j < inputs.length && j < existingConfig.guardians.length; j++) {
+          inputs[j].value = existingConfig.guardians[j].github || '';
+        }
+      }
+    }
+
+    function loadExistingGitHubConfig() {
+      var existing = AegisGitHub.getConfig();
+      if (existing) {
+        if (existing.owner) document.getElementById('ghOwner').value = existing.owner;
+        if (existing.repo) document.getElementById('ghRepo').value = existing.repo;
+        if (existing.pat) document.getElementById('ghPat').value = existing.pat;
+        if (existing.siteUrl) document.getElementById('ghSiteUrl').value = existing.siteUrl;
+      }
+      populateGuardianGitHubInputs();
+    }
+
+    async function testGitHubConnection() {
+      var pat = document.getElementById('ghPat').value.trim();
+      var owner = document.getElementById('ghOwner').value.trim();
+      var repo = document.getElementById('ghRepo').value.trim();
+
+      if (!pat || !owner || !repo) {
+        showGitHubSetupError(AegisLang.t('setup.github.error.incomplete'));
+        return;
+      }
+
+      var btn = document.getElementById('ghTestBtn');
+      btn.disabled = true;
+      btn.querySelector('span').textContent = AegisLang.t('setup.github.testing');
+
+      hideGitHubSetupError();
+      hideGitHubSetupSuccess();
+
+      var result = await AegisGitHub.testConnection(pat, owner, repo);
+
+      btn.disabled = false;
+      btn.querySelector('span').textContent = AegisLang.t('setup.github.test');
+
+      if (result.valid) {
+        showGitHubSetupSuccess(AegisLang.t('setup.github.test.ok') + ' (' + result.user + ')');
+      } else {
+        showGitHubSetupError(result.error);
+      }
+    }
+
+    function saveGitHubConfig() {
+      var pat = document.getElementById('ghPat').value.trim();
+      var owner = document.getElementById('ghOwner').value.trim();
+      var repo = document.getElementById('ghRepo').value.trim();
+      var siteUrl = document.getElementById('ghSiteUrl').value.trim();
+
+      if (!pat || !owner || !repo) {
+        showGitHubSetupError(AegisLang.t('setup.github.error.incomplete'));
+        return;
+      }
+
+      var inputs = document.querySelectorAll('.gh-guardian-input');
+      var guardians = [];
+      for (var i = 0; i < inputs.length; i++) {
+        var username = inputs[i].value.trim();
+        if (username) {
+          guardians.push({ github: username, label: 'Guardian #' + (i + 1) });
+        }
+      }
+
+      if (guardians.length === 0) {
+        showGitHubSetupError(AegisLang.t('setup.github.error.noguardians'));
+        return;
+      }
+
+      AegisGitHub.saveConfig({
+        pat: pat,
+        owner: owner,
+        repo: repo,
+        guardians: guardians,
+        siteUrl: siteUrl
+      });
+
+      hideGitHubSetupError();
+      showGitHubSetupSuccess(AegisLang.t('setup.github.saved'));
+    }
+
+    function showGitHubSetupError(msg) {
+      document.getElementById('githubSetupError').classList.remove('hidden');
+      document.getElementById('githubSetupErrorText').textContent = msg;
+    }
+    function hideGitHubSetupError() {
+      document.getElementById('githubSetupError').classList.add('hidden');
+    }
+    function showGitHubSetupSuccess(msg) {
+      document.getElementById('githubSetupSuccess').classList.remove('hidden');
+      document.getElementById('githubSetupSuccessText').textContent = msg;
+    }
+    function hideGitHubSetupSuccess() {
+      document.getElementById('githubSetupSuccess').classList.add('hidden');
+    }
+
     document.addEventListener('aegis-ready', function () {
       // Setup passphrase strength listener
       document.getElementById('passphrase').addEventListener('input', function () {
@@ -576,6 +761,14 @@
 
       // Initialize threshold options with i18n strings
       updateThresholdOptions();
+
+      // Initialize GitHub config if existing
+      loadExistingGitHubConfig();
+
+      // Update GitHub guardian inputs when guardian count changes
+      document.getElementById('totalGuardians').addEventListener('change', function() {
+        populateGuardianGitHubInputs();
+      });
     });
   </script>
 </body>

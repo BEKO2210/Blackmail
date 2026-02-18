@@ -1,0 +1,10 @@
+{
+  "aegis_heartbeat": true,
+  "version": "1.0.0",
+  "last_checkin": null,
+  "interval_hours": 48,
+  "guardians": [],
+  "package_id_short": "",
+  "escalation_state": "INACTIVE",
+  "site_url": ""
+}
