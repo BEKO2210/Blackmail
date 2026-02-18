@@ -12,7 +12,7 @@
     <header class="aegis-header">
       <a href="index.html" class="aegis-logo">
         <div class="aegis-logo-icon"><img src="asset/Picsart_26-02-18_10-54-29-782.png" alt="AEGIS"></div>
-        <span class="aegis-logo-text">AEGIS</span>
+        <span class="aegis-logo-text" data-text="AEGIS">AEGIS</span>
       </a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
         <span class="nav-toggle-bar"></span>
@@ -61,7 +61,7 @@
 
       <!-- No Config Warning -->
       <div class="alert alert-warning" id="noConfigAlert" style="display:none">
-        <span class="alert-icon">&#x26a0;&#xfe0f;</span>
+        <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4m0 4h.01"/></svg></span>
         <div data-i18n="checkin.noconfig">No AEGIS profile found. Please complete the <a href="setup.html" style="color: inherit; font-weight: 600;">Setup</a> first.</div>
       </div>
 
@@ -80,7 +80,7 @@
         </div>
 
         <div class="alert alert-warning hidden" id="checkinError">
-          <span class="alert-icon">&#x26a0;&#xfe0f;</span>
+          <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4m0 4h.01"/></svg></span>
           <span id="checkinErrorText"></span>
         </div>
 
@@ -109,7 +109,7 @@
         </div>
 
         <div class="alert alert-info mt-4">
-          <span class="alert-icon">&#x2139;&#xfe0f;</span>
+          <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg></span>
           <div><span data-i18n="checkin.token.next"><strong>Next check-in:</strong></span> <span id="nextCheckin">&mdash;</span><br><span data-i18n="checkin.token.channel">Send the token via a secure channel (Signal, in person, etc.)</span></div>
         </div>
       </div>
@@ -134,6 +134,7 @@
 
   </div>
 
+  <script src="js/icons.js"></script>
   <script src="js/crypto.js"></script>
   <script src="js/checkin.js"></script>
   <script src="js/lang.js"></script>
@@ -163,8 +164,8 @@
 
     function updateButtonLabels() {
       document.getElementById('copyBtnInline').textContent = AegisLang.t('copy');
-      document.getElementById('copyTokenBtn').innerHTML = '&#x1f4cb; ' + AegisLang.t('checkin.token.copy');
-      document.getElementById('saveTokenBtn').innerHTML = '&#x1f4be; ' + AegisLang.t('checkin.token.save');
+      document.getElementById('copyTokenBtn').innerHTML = AegisIcons.clipboard + ' ' + AegisLang.t('checkin.token.copy');
+      document.getElementById('saveTokenBtn').innerHTML = AegisIcons.download + ' ' + AegisLang.t('checkin.token.save');
     }
 
     function updateStatusCard() {
@@ -182,7 +183,7 @@
         statusCard.classList.add('danger');
       }
 
-      document.getElementById('statusIcon').textContent = escalation.icon;
+      document.getElementById('statusIcon').innerHTML = escalation.icon;
       document.getElementById('statusIcon').style.color = escalation.color;
       document.getElementById('statusLevel').textContent = AegisLang.t('escalation.' + level);
       document.getElementById('statusLevel').style.color = escalation.color;
@@ -291,10 +292,10 @@
       navigator.clipboard.writeText(JSON.stringify(lastToken)).then(function () {
         var copyText = AegisLang.t('copied');
         document.getElementById('copyBtnInline').textContent = copyText;
-        document.getElementById('copyTokenBtn').innerHTML = '&#x2714; ' + copyText;
+        document.getElementById('copyTokenBtn').innerHTML = AegisIcons.checkSmall + ' ' + copyText;
         setTimeout(function () {
           document.getElementById('copyBtnInline').textContent = AegisLang.t('copy');
-          document.getElementById('copyTokenBtn').innerHTML = '&#x1f4cb; ' + AegisLang.t('checkin.token.copy');
+          document.getElementById('copyTokenBtn').innerHTML = AegisIcons.clipboard + ' ' + AegisLang.t('checkin.token.copy');
         }, 2000);
       });
     }
@@ -342,7 +343,7 @@
       container.innerHTML = history.slice(0, 10).map(function (h) {
         return '<div class="file-item" style="margin-bottom: 6px;">' +
           '<div class="file-item-info">' +
-          '<span class="file-item-icon">&#x2705;</span>' +
+          '<span class="file-item-icon">' + AegisIcons.check + '</span>' +
           '<span class="file-item-name mono" style="font-size: 12px;">' + escapeHtml(h.code) + '</span>' +
           '</div>' +
           '<span class="file-item-size">' + new Date(h.timestamp).toLocaleString(locale) + '</span>' +

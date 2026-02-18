@@ -88,13 +88,13 @@
   };
 
   window.getFileIcon = function (type) {
-    if (!type) return '📎';
-    if (type.startsWith('image/')) return '🖼️';
-    if (type.startsWith('video/')) return '🎬';
-    if (type.startsWith('audio/')) return '🎵';
-    if (type.includes('pdf')) return '📄';
-    if (type.includes('text')) return '📝';
-    return '📎';
+    if (!type) return AegisIcons.file;
+    if (type.startsWith('image/')) return AegisIcons.image;
+    if (type.startsWith('video/')) return AegisIcons.video;
+    if (type.startsWith('audio/')) return AegisIcons.music;
+    if (type.includes('pdf')) return AegisIcons.fileText;
+    if (type.includes('text')) return AegisIcons.fileText;
+    return AegisIcons.file;
   };
 
   window.downloadFile = function (content, filename, type) {

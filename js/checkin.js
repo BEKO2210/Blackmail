@@ -126,12 +126,13 @@ const AegisCheckin = (() => {
     return 4; // Full escalation
   }
 
+  var _dot = function(c) { return '<span class="aegis-dot" style="background:' + c + '"></span>'; };
   const ESCALATION_LABELS = [
-    { level: 0, label: 'Alles in Ordnung', icon: '✅', color: '#22c55e' },
-    { level: 1, label: 'Check-in überfällig', icon: '⚠️', color: '#eab308' },
-    { level: 2, label: 'Guardians benachrichtigen', icon: '🟠', color: '#f97316' },
-    { level: 3, label: 'Fragmente zusammenführen', icon: '🔴', color: '#ef4444' },
-    { level: 4, label: 'Volle Eskalation', icon: '🚨', color: '#dc2626' }
+    { level: 0, label: 'Alles in Ordnung', icon: _dot('#22c55e'), color: '#22c55e' },
+    { level: 1, label: 'Check-in überfällig', icon: _dot('#eab308'), color: '#eab308' },
+    { level: 2, label: 'Guardians benachrichtigen', icon: _dot('#f97316'), color: '#f97316' },
+    { level: 3, label: 'Fragmente zusammenführen', icon: _dot('#ef4444'), color: '#ef4444' },
+    { level: 4, label: 'Volle Eskalation', icon: _dot('#dc2626'), color: '#dc2626' }
   ];
 
   return {
