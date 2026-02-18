@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AEGIS — Guardian</title>
-  <link rel="stylesheet" href="style.css">
+  <title>AEGIS — Guardian Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="aegis-app">
@@ -14,267 +14,388 @@
         <div class="aegis-logo-icon">A</div>
         <span class="aegis-logo-text">AEGIS</span>
       </a>
-      <nav class="aegis-nav">
-        <a href="setup.html">Setup</a>
-        <a href="checkin.html">Check-in</a>
-        <a href="guardian.html" class="active">Guardian</a>
-        <a href="verify.html">Verify</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="aegis-nav" id="aegisNav">
+        <div class="nav-links">
+          <a href="index.html" data-i18n="nav.home">Home</a>
+          <a href="setup.html" data-i18n="nav.setup">Setup</a>
+          <a href="checkin.html" data-i18n="nav.checkin">Check-in</a>
+          <a href="guardian.html" data-i18n="nav.guardian">Guardian</a>
+          <a href="verify.html" data-i18n="nav.verify">Verify</a>
+          <a href="howitworks.html" data-i18n="nav.howitworks">How It Works</a>
+          <div class="nav-divider"></div>
+          <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+          <a href="imprint.html" data-i18n="nav.imprint">Imprint</a>
+        </div>
+        <div class="lang-toggle">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
       </nav>
     </header>
 
     <main class="aegis-main">
-      <h1>Guardian Dashboard</h1>
-      <p class="subtitle">Verifiziere Check-in-Tokens und rekonstruiere bei Eskalation.</p>
+      <h1 data-i18n="guardian.title">Guardian Dashboard</h1>
+      <p class="subtitle" data-i18n="guardian.subtitle">Verify check-in tokens and reconstruct during escalation.</p>
 
-      <!-- Token Verification -->
+      <!-- Card 1: Verify Token -->
       <div class="card">
+        <div class="step-indicator">
+          <span class="step-number">1</span>
+          <span class="step-label" data-i18n="guardian.step1.label">Step 1 — Verify Token</span>
+        </div>
+
         <div class="card-header">
-          <h2 class="card-title">🔍 Token verifizieren</h2>
-          <p class="card-desc">Füge das Check-in-Token ein, das du erhalten hast.</p>
+          <h2 class="card-title" data-i18n="guardian.verify.title">Verify Token</h2>
+          <p class="card-desc" data-i18n="guardian.verify.desc">Paste the check-in token you received.</p>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Check-in Token (JSON)</label>
+          <label class="form-label" data-i18n="guardian.verify.label">Check-in Token (JSON)</label>
           <textarea id="tokenInput" class="form-textarea form-input-mono" rows="5"
+                    data-i18n-placeholder="guardian.verify.placeholder"
                     placeholder='{"aegis_checkin": true, "timestamp": "...", ...}'></textarea>
         </div>
 
-        <button class="btn btn-primary btn-block" onclick="verifyToken()">🔍 Token prüfen</button>
+        <button class="btn btn-primary btn-block" onclick="verifyToken()" data-i18n="guardian.verify.btn">Verify Token</button>
 
         <div id="verifyResult" class="hidden mt-6 animate-in">
           <div id="verifyOk" class="alert alert-success hidden">
-            <span class="alert-icon">✅</span>
-            <div><strong>Token gültig</strong><br><span id="verifyOkDetails"></span></div>
+            <span class="alert-icon">&#x2705;</span>
+            <div><strong data-i18n="guardian.verify.ok">Token valid</strong><br><span id="verifyOkDetails"></span></div>
           </div>
           <div id="verifyDuress" class="alert alert-danger hidden">
-            <span class="alert-icon">🚨</span>
-            <div>
-              <strong>DURESS ERKANNT — Person ist möglicherweise in Gefahr!</strong><br>
-              Die Person wurde gezwungen sich zu melden. Das Token sieht normal aus, enthält aber ein verstecktes Warnsignal.<br><br>
-              <strong>Sofort Eskalationsstufe 3 einleiten!</strong><br>
-              Kontaktiere andere Guardians und beginne mit der Fragment-Zusammenführung.
-            </div>
+            <span class="alert-icon">&#x1f6a8;</span>
+            <div><span data-i18n="guardian.verify.duress"><strong>DURESS DETECTED — Person may be in danger!</strong><br>The person was forced to check in. The token looks normal but contains a hidden warning signal.<br><br><strong>Immediately initiate escalation level 3!</strong><br>Contact other guardians and begin fragment assembly.</span></div>
           </div>
           <div id="verifyInvalid" class="alert alert-warning hidden">
-            <span class="alert-icon">❌</span>
-            <div><strong>Token ungültig</strong><br><span id="verifyInvalidDetails"></span></div>
+            <span class="alert-icon">&#x274c;</span>
+            <div><strong data-i18n="guardian.verify.invalid">Token invalid</strong><br><span id="verifyInvalidDetails"></span></div>
           </div>
         </div>
       </div>
 
-      <!-- Fragment Assembly -->
+      <!-- Card 2: Assemble Fragments -->
       <div class="card">
+        <div class="step-indicator">
+          <span class="step-number">2</span>
+          <span class="step-label" data-i18n="guardian.step2.label">Step 2 — Assemble Fragments</span>
+        </div>
+
         <div class="card-header">
-          <h2 class="card-title">🧩 Fragmente zusammenführen</h2>
-          <p class="card-desc">Wenn die Eskalation erreicht wurde, können Guardians hier ihre Fragmente kombinieren, um die Beweise zu entschlüsseln.</p>
+          <h2 class="card-title" data-i18n="guardian.assemble.title">Assemble Fragments</h2>
+          <p class="card-desc" data-i18n="guardian.assemble.desc">When escalation has been reached, guardians can combine their fragments here to decrypt the evidence.</p>
         </div>
 
         <div class="alert alert-warning">
-          <span class="alert-icon">⚠️</span>
-          <div>Führe Fragmente nur zusammen, wenn die Eskalationsbedingungen erfüllt sind. Alle beteiligten Guardians müssen zustimmen.</div>
+          <span class="alert-icon">&#x26a0;&#xfe0f;</span>
+          <div data-i18n="guardian.assemble.warning">Only assemble fragments when escalation conditions are met. All participating guardians must agree.</div>
         </div>
 
         <div id="fragmentInputs">
           <div class="form-group">
-            <label class="form-label">Guardian-Kit #1</label>
-            <textarea class="form-textarea form-input-mono fragment-input" rows="3" placeholder="Guardian-Kit JSON hier einfügen..."></textarea>
+            <label class="form-label"><span data-i18n="guardian.assemble.kit.label">Guardian Kit</span> #1</label>
+            <textarea class="form-textarea form-input-mono fragment-input" rows="3"
+                      data-i18n-placeholder="guardian.assemble.kit.placeholder"
+                      placeholder="Paste guardian kit JSON here..."></textarea>
           </div>
           <div class="form-group">
-            <label class="form-label">Guardian-Kit #2</label>
-            <textarea class="form-textarea form-input-mono fragment-input" rows="3" placeholder="Guardian-Kit JSON hier einfügen..."></textarea>
+            <label class="form-label"><span data-i18n="guardian.assemble.kit.label">Guardian Kit</span> #2</label>
+            <textarea class="form-textarea form-input-mono fragment-input" rows="3"
+                      data-i18n-placeholder="guardian.assemble.kit.placeholder"
+                      placeholder="Paste guardian kit JSON here..."></textarea>
           </div>
           <div class="form-group">
-            <label class="form-label">Guardian-Kit #3</label>
-            <textarea class="form-textarea form-input-mono fragment-input" rows="3" placeholder="Guardian-Kit JSON hier einfügen..."></textarea>
+            <label class="form-label"><span data-i18n="guardian.assemble.kit.label">Guardian Kit</span> #3</label>
+            <textarea class="form-textarea form-input-mono fragment-input" rows="3"
+                      data-i18n-placeholder="guardian.assemble.kit.placeholder"
+                      placeholder="Paste guardian kit JSON here..."></textarea>
           </div>
         </div>
 
         <div class="btn-group">
-          <button class="btn btn-ghost" onclick="addFragmentInput()">+ Weiteres Fragment</button>
-          <button class="btn btn-danger" onclick="assembleFragments()">🔓 Passphrase rekonstruieren</button>
+          <button class="btn btn-ghost" onclick="addFragmentInput()" data-i18n="guardian.assemble.add">+ Add Fragment</button>
+          <button class="btn btn-danger" onclick="assembleFragments()" data-i18n="guardian.assemble.btn">Reconstruct Passphrase</button>
         </div>
 
         <div id="assemblyResult" class="hidden mt-6">
           <div class="alert alert-success" id="assemblySuccess" style="display:none">
-            <span class="alert-icon">🔓</span>
-            <div><strong>Passphrase erfolgreich rekonstruiert!</strong><br>Verwende diese Passphrase um das Evidenz-Paket zu entschlüsseln.</div>
+            <span class="alert-icon">&#x1f513;</span>
+            <div><span data-i18n="guardian.assemble.success"><strong>Passphrase successfully reconstructed!</strong><br>Use this passphrase to decrypt the evidence package.</span></div>
           </div>
           <div class="hash-display" id="recoveredPassphrase" style="display:none">
-            <button class="copy-btn" onclick="copyRecovered()">Kopieren</button>
-            <span id="recoveredText">—</span>
+            <button class="copy-btn" onclick="copyRecovered()" data-i18n="copy">Copy</button>
+            <span id="recoveredText"></span>
           </div>
           <div class="alert alert-danger" id="assemblyError" style="display:none">
-            <span class="alert-icon">❌</span>
+            <span class="alert-icon">&#x274c;</span>
             <span id="assemblyErrorText"></span>
           </div>
         </div>
       </div>
 
-      <!-- Decrypt Package -->
+      <!-- Card 3: Decrypt Package -->
       <div class="card">
+        <div class="step-indicator">
+          <span class="step-number">3</span>
+          <span class="step-label" data-i18n="guardian.step3.label">Step 3 — Decrypt Package</span>
+        </div>
+
         <div class="card-header">
-          <h2 class="card-title">📦 Paket entschlüsseln</h2>
-          <p class="card-desc">Lade das verschlüsselte Evidenz-Paket und gib die rekonstruierte Passphrase ein.</p>
+          <h2 class="card-title" data-i18n="guardian.decrypt.title">Decrypt Package</h2>
+          <p class="card-desc" data-i18n="guardian.decrypt.desc">Upload the encrypted evidence package and enter the reconstructed passphrase.</p>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Evidenz-Paket (JSON-Datei)</label>
+          <label class="form-label" data-i18n="guardian.decrypt.file.label">Evidence Package (JSON file)</label>
           <input type="file" id="packageFile" accept=".json" class="form-input">
         </div>
 
         <div class="form-group">
-          <label class="form-label">Passphrase</label>
-          <input type="password" id="decryptPass" class="form-input form-input-mono" placeholder="Rekonstruierte Passphrase...">
+          <label class="form-label" data-i18n="guardian.decrypt.pass.label">Passphrase</label>
+          <input type="password" id="decryptPass" class="form-input form-input-mono"
+                 data-i18n-placeholder="guardian.decrypt.pass.placeholder"
+                 placeholder="Reconstructed passphrase...">
         </div>
 
-        <button class="btn btn-primary btn-block" onclick="decryptPackage()">🔓 Entschlüsseln</button>
+        <button class="btn btn-primary btn-block" onclick="decryptPackage()" data-i18n="guardian.decrypt.btn">Decrypt</button>
 
         <div id="decryptResult" class="hidden mt-6">
           <div class="alert alert-success" id="decryptSuccess" style="display:none">
-            <span class="alert-icon">📂</span>
-            <div><strong>Erfolgreich entschlüsselt!</strong><br><span id="decryptDetails"></span></div>
+            <span class="alert-icon">&#x1f4c2;</span>
+            <div><strong data-i18n="guardian.decrypt.success">Successfully decrypted!</strong><br><span id="decryptDetails"></span></div>
           </div>
           <div id="decryptedFiles"></div>
+          <div id="decryptNote" style="display:none"></div>
           <div class="alert alert-danger" id="decryptError" style="display:none">
-            <span class="alert-icon">❌</span>
-            <span id="decryptErrorText">Entschlüsselung fehlgeschlagen. Falsche Passphrase?</span>
+            <span class="alert-icon">&#x274c;</span>
+            <span id="decryptErrorText"></span>
           </div>
         </div>
       </div>
+
     </main>
 
-    <footer class="aegis-footer">AEGIS v1.0 — Guardian Edition</footer>
+    <footer class="aegis-footer">
+      <div class="footer-links">
+        <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
+        <span class="footer-sep">|</span>
+        <a href="imprint.html" data-i18n="footer.imprint">Imprint</a>
+        <span class="footer-sep">|</span>
+        <a href="howitworks.html" data-i18n="footer.howitworks">How It Works</a>
+      </div>
+      <p data-i18n="footer.text">AEGIS — No data leaves your browser</p>
+    </footer>
+
   </div>
 
-  <script src="crypto.js"></script>
-  <script src="shamir.js"></script>
-  <script src="checkin.js"></script>
+  <script src="js/crypto.js"></script>
+  <script src="js/shamir.js"></script>
+  <script src="js/checkin.js"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/main.js"></script>
   <script>
     'use strict';
 
+    var fragmentCount = 3;
+
+    document.addEventListener('aegis-ready', function () {
+
+      // Re-bind dynamic strings on language change
+      document.addEventListener('aegis-lang-change', function () {
+        // Update the copy button if it is currently showing "Copied"
+        var copyBtn = document.querySelector('#recoveredPassphrase .copy-btn');
+        if (copyBtn) {
+          copyBtn.textContent = AegisLang.t('copy');
+        }
+      });
+
+    });
+
     async function verifyToken() {
-      const input = document.getElementById('tokenInput').value.trim();
+      var input = document.getElementById('tokenInput').value.trim();
       if (!input) return;
-      const resultDiv = document.getElementById('verifyResult');
+
+      var resultDiv = document.getElementById('verifyResult');
       resultDiv.classList.remove('hidden');
       document.getElementById('verifyOk').classList.add('hidden');
       document.getElementById('verifyDuress').classList.add('hidden');
       document.getElementById('verifyInvalid').classList.add('hidden');
 
       try {
-        const token = JSON.parse(input);
+        var token = JSON.parse(input);
         if (!token.aegis_checkin) throw new Error('Not an AEGIS token');
-        const result = await AegisCheckin.verifyToken(token);
+
+        var result = await AegisCheckin.verifyToken(token);
 
         if (result.status === 'DURESS') {
           document.getElementById('verifyDuress').classList.remove('hidden');
         } else if (result.valid) {
           document.getElementById('verifyOk').classList.remove('hidden');
-          document.getElementById('verifyOkDetails').innerHTML = 
-            `Zeitstempel: ${new Date(result.timestamp).toLocaleString('de-DE')}<br>Alter: ${result.ageHours} Stunden<br>Paket-ID: ${result.packageId.substring(0, 16)}...`;
+          var locale = AegisLang.getLocale();
+          var details = AegisLang.t('guardian.verify.ok.timestamp') + ' ' +
+            new Date(result.timestamp).toLocaleString(locale) + '<br>' +
+            AegisLang.t('guardian.verify.ok.age') + ' ' +
+            result.ageHours + ' ' + AegisLang.t('guardian.verify.ok.hours') + '<br>' +
+            AegisLang.t('guardian.verify.ok.package') + ' ' +
+            escapeHtml(result.packageId.substring(0, 16)) + '...';
+          document.getElementById('verifyOkDetails').innerHTML = details;
         } else {
           document.getElementById('verifyInvalid').classList.remove('hidden');
-          document.getElementById('verifyInvalidDetails').textContent = result.error || 'Hash-Prüfung fehlgeschlagen.';
+          document.getElementById('verifyInvalidDetails').textContent =
+            result.error || AegisLang.t('guardian.verify.invalid.hash');
         }
       } catch (e) {
         document.getElementById('verifyInvalid').classList.remove('hidden');
-        document.getElementById('verifyInvalidDetails').textContent = 'Ungültiges Token-Format: ' + e.message;
+        document.getElementById('verifyInvalidDetails').textContent =
+          AegisLang.t('guardian.verify.invalid.format') + e.message;
       }
     }
 
-    let fragmentCount = 3;
     function addFragmentInput() {
       fragmentCount++;
-      const div = document.createElement('div');
+      var div = document.createElement('div');
       div.className = 'form-group animate-in';
-      div.innerHTML = `<label class="form-label">Guardian-Kit #${fragmentCount}</label><textarea class="form-textarea form-input-mono fragment-input" rows="3" placeholder="Guardian-Kit JSON hier einfügen..."></textarea>`;
+      div.innerHTML = '<label class="form-label">' +
+        AegisLang.t('guardian.assemble.kit.label') + ' #' + fragmentCount +
+        '</label><textarea class="form-textarea form-input-mono fragment-input" rows="3" placeholder="' +
+        escapeHtml(AegisLang.t('guardian.assemble.kit.placeholder')) + '"></textarea>';
       document.getElementById('fragmentInputs').appendChild(div);
     }
 
     function assembleFragments() {
-      const inputs = document.querySelectorAll('.fragment-input');
-      const shares = [];
+      var inputs = document.querySelectorAll('.fragment-input');
+      var shares = [];
+
       document.getElementById('assemblyResult').classList.remove('hidden');
       document.getElementById('assemblySuccess').style.display = 'none';
       document.getElementById('recoveredPassphrase').style.display = 'none';
       document.getElementById('assemblyError').style.display = 'none';
 
       try {
-        for (const input of inputs) {
-          const val = input.value.trim();
+        for (var i = 0; i < inputs.length; i++) {
+          var val = inputs[i].value.trim();
           if (!val) continue;
-          const kit = JSON.parse(val);
-          const share = kit.aegis_guardian_kit ? kit.share : kit;
+          var kit = JSON.parse(val);
+          var share = kit.aegis_guardian_kit ? kit.share : kit;
           shares.push(AegisShamir.importShare(share));
         }
+
         if (shares.length < 2) {
           document.getElementById('assemblyError').style.display = 'flex';
-          document.getElementById('assemblyErrorText').textContent = `Mindestens ${shares[0]?.threshold || 2} Fragmente benötigt. Aktuell: ${shares.length}`;
+          var needed = (shares[0] && shares[0].threshold) ? shares[0].threshold : 2;
+          document.getElementById('assemblyErrorText').textContent =
+            needed + ' ' + AegisLang.t('guardian.assemble.error.min') + shares.length;
           return;
         }
-        const threshold = shares[0].threshold;
+
+        var threshold = shares[0].threshold;
         if (shares.length < threshold) {
           document.getElementById('assemblyError').style.display = 'flex';
-          document.getElementById('assemblyErrorText').textContent = `${threshold} Fragmente benötigt, aber nur ${shares.length} vorhanden.`;
+          document.getElementById('assemblyErrorText').textContent =
+            threshold + AegisLang.t('guardian.assemble.error.threshold') +
+            shares.length + AegisLang.t('guardian.assemble.error.threshold2');
           return;
         }
-        const recovered = AegisShamir.combine(shares);
-        const passphrase = new TextDecoder().decode(recovered);
+
+        var recovered = AegisShamir.combine(shares);
+        var passphrase = new TextDecoder().decode(recovered);
+
         document.getElementById('assemblySuccess').style.display = 'flex';
         document.getElementById('recoveredPassphrase').style.display = 'block';
         document.getElementById('recoveredText').textContent = passphrase;
         document.getElementById('decryptPass').value = passphrase;
       } catch (e) {
         document.getElementById('assemblyError').style.display = 'flex';
-        document.getElementById('assemblyErrorText').textContent = 'Rekonstruktion fehlgeschlagen: ' + e.message;
+        document.getElementById('assemblyErrorText').textContent =
+          AegisLang.t('guardian.assemble.error.general') + e.message;
       }
     }
 
     function copyRecovered() {
-      navigator.clipboard.writeText(document.getElementById('recoveredText').textContent).then(() => {
-        const btn = document.querySelector('#recoveredPassphrase .copy-btn');
-        btn.textContent = '✓ Kopiert'; setTimeout(() => btn.textContent = 'Kopieren', 2000);
+      var text = document.getElementById('recoveredText').textContent;
+      navigator.clipboard.writeText(text).then(function () {
+        var btn = document.querySelector('#recoveredPassphrase .copy-btn');
+        btn.textContent = AegisLang.t('copied');
+        setTimeout(function () {
+          btn.textContent = AegisLang.t('copy');
+        }, 2000);
       });
     }
 
     async function decryptPackage() {
-      const fileInput = document.getElementById('packageFile');
-      const passphrase = document.getElementById('decryptPass').value;
-      const resultDiv = document.getElementById('decryptResult');
+      var fileInput = document.getElementById('packageFile');
+      var passphrase = document.getElementById('decryptPass').value;
+      var resultDiv = document.getElementById('decryptResult');
+
       resultDiv.classList.remove('hidden');
       document.getElementById('decryptSuccess').style.display = 'none';
       document.getElementById('decryptError').style.display = 'none';
       document.getElementById('decryptedFiles').innerHTML = '';
+      document.getElementById('decryptNote').style.display = 'none';
+      document.getElementById('decryptNote').innerHTML = '';
 
-      if (!fileInput.files.length) { document.getElementById('decryptError').style.display = 'flex'; document.getElementById('decryptErrorText').textContent = 'Bitte eine Paket-Datei auswählen.'; return; }
-      if (!passphrase) { document.getElementById('decryptError').style.display = 'flex'; document.getElementById('decryptErrorText').textContent = 'Bitte Passphrase eingeben.'; return; }
+      if (!fileInput.files.length) {
+        document.getElementById('decryptError').style.display = 'flex';
+        document.getElementById('decryptErrorText').textContent =
+          AegisLang.t('guardian.decrypt.error.nofile');
+        return;
+      }
+
+      if (!passphrase) {
+        document.getElementById('decryptError').style.display = 'flex';
+        document.getElementById('decryptErrorText').textContent =
+          AegisLang.t('guardian.decrypt.error.nopass');
+        return;
+      }
 
       try {
-        const fileContent = await fileInput.files[0].text();
-        const pkg = JSON.parse(fileContent);
-        if (!pkg.aegis) throw new Error('Keine gültige AEGIS-Paketdatei.');
+        var fileContent = await fileInput.files[0].text();
+        var pkg = JSON.parse(fileContent);
+        if (!pkg.aegis) throw new Error(AegisLang.t('guardian.decrypt.error.invalid'));
 
-        const result = await AegisCrypto.decryptEvidencePackage(pkg, passphrase);
+        var result = await AegisCrypto.decryptEvidencePackage(pkg, passphrase);
+        var locale = AegisLang.getLocale();
+
         document.getElementById('decryptSuccess').style.display = 'flex';
-        document.getElementById('decryptDetails').textContent = `${result.files.length} Datei(en) entschlüsselt. Erstellt: ${new Date(result.manifest.created).toLocaleString('de-DE')}`;
+        document.getElementById('decryptDetails').textContent =
+          result.files.length + AegisLang.t('guardian.decrypt.files') +
+          new Date(result.manifest.created).toLocaleString(locale);
 
-        const container = document.getElementById('decryptedFiles');
-        if (result.manifest.metadata?.note) {
-          container.innerHTML += `<div class="card mt-4" style="background: var(--aegis-blue-subtle); border: none;"><h3>📝 Notiz</h3><p class="mt-4 text-sm">${escapeHtml(result.manifest.metadata.note)}</p></div>`;
+        var container = document.getElementById('decryptedFiles');
+
+        if (result.manifest.metadata && result.manifest.metadata.note) {
+          var noteDiv = document.getElementById('decryptNote');
+          noteDiv.style.display = 'block';
+          noteDiv.innerHTML = '<div class="card mt-4" style="background: var(--aegis-blue-subtle); border: none;">' +
+            '<h3>' + escapeHtml(AegisLang.t('guardian.decrypt.note')) + '</h3>' +
+            '<p class="mt-4 text-sm">' + escapeHtml(result.manifest.metadata.note) + '</p></div>';
         }
-        for (const file of result.files) {
-          const blob = new Blob([file.data], { type: file.type });
-          const url = URL.createObjectURL(blob);
-          container.innerHTML += `<div class="file-item mt-4"><div class="file-item-info"><span class="file-item-icon">${getFileIcon(file.type)}</span><span class="file-item-name">${escapeHtml(file.name)}</span></div><a href="${url}" download="${escapeHtml(file.name)}" class="btn btn-secondary" style="font-size: 12px;">💾 Herunterladen</a></div>`;
+
+        for (var i = 0; i < result.files.length; i++) {
+          var file = result.files[i];
+          var blob = new Blob([file.data], { type: file.type });
+          var url = URL.createObjectURL(blob);
+          var fileDiv = document.createElement('div');
+          fileDiv.className = 'file-item mt-4';
+          fileDiv.innerHTML = '<div class="file-item-info">' +
+            '<span class="file-item-icon">' + getFileIcon(file.type) + '</span>' +
+            '<span class="file-item-name">' + escapeHtml(file.name) + '</span>' +
+            '</div>' +
+            '<a href="' + url + '" download="' + escapeHtml(file.name) + '" class="btn btn-secondary" style="font-size: 12px;">' +
+            escapeHtml(AegisLang.t('guardian.decrypt.download')) + '</a>';
+          container.appendChild(fileDiv);
         }
       } catch (e) {
         document.getElementById('decryptError').style.display = 'flex';
-        document.getElementById('decryptErrorText').textContent = 'Entschlüsselung fehlgeschlagen: ' + e.message;
+        document.getElementById('decryptErrorText').textContent =
+          AegisLang.t('guardian.decrypt.error.general') + e.message;
       }
     }
-
-    function getFileIcon(type) { if (!type) return '📎'; if (type.startsWith('image/')) return '🖼️'; if (type.startsWith('video/')) return '🎬'; if (type.startsWith('audio/')) return '🎵'; if (type.includes('pdf')) return '📄'; return '📎'; }
-    function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
   </script>
 </body>
 </html>

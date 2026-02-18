@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AEGIS — Check-in</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="aegis-app">
@@ -14,171 +14,347 @@
         <div class="aegis-logo-icon">A</div>
         <span class="aegis-logo-text">AEGIS</span>
       </a>
-      <nav class="aegis-nav">
-        <a href="setup.html">Setup</a>
-        <a href="checkin.html" class="active">Check-in</a>
-        <a href="guardian.html">Guardian</a>
-        <a href="verify.html">Verify</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="aegis-nav" id="aegisNav">
+        <div class="nav-links">
+          <a href="index.html" data-i18n="nav.home">Home</a>
+          <a href="setup.html" data-i18n="nav.setup">Setup</a>
+          <a href="checkin.html" data-i18n="nav.checkin">Check-in</a>
+          <a href="guardian.html" data-i18n="nav.guardian">Guardian</a>
+          <a href="verify.html" data-i18n="nav.verify">Verify</a>
+          <a href="howitworks.html" data-i18n="nav.howitworks">How It Works</a>
+          <div class="nav-divider"></div>
+          <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+          <a href="imprint.html" data-i18n="nav.imprint">Imprint</a>
+        </div>
+        <div class="lang-toggle">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
       </nav>
     </header>
 
     <main class="aegis-main">
-      <h1>Check-in</h1>
-      <p class="subtitle">Melde dich regelmäßig, um den Dead Man's Switch zurückzusetzen.</p>
+      <h1 data-i18n="checkin.title">Check-in</h1>
+      <p class="subtitle" data-i18n="checkin.subtitle">Check in regularly to reset the Dead Man's Switch.</p>
 
-      <div class="alert alert-warning" id="noConfigAlert" style="display:none">
-        <span class="alert-icon">⚠️</span>
-        <div>Kein AEGIS-Profil gefunden. Bitte zuerst die <a href="setup.html" style="color: inherit; font-weight: 600;">Einrichtung</a> durchführen.</div>
+      <!-- Status Card -->
+      <div class="card status-card" id="statusCard" style="display:none">
+        <div class="status-header">
+          <span class="status-icon" id="statusIcon"></span>
+          <div class="status-info">
+            <div class="status-level" id="statusLevel"></div>
+            <div class="status-times">
+              <span data-i18n="checkin.status.last">Last check-in:</span> <span id="statusLastCheckin"></span><br>
+              <span data-i18n="checkin.status.next">Next due:</span> <span id="statusNextDue"></span>
+            </div>
+          </div>
+        </div>
+        <div class="checkin-progress">
+          <div class="checkin-progress-fill" id="progressFill"></div>
+        </div>
       </div>
 
+      <!-- No Config Warning -->
+      <div class="alert alert-warning" id="noConfigAlert" style="display:none">
+        <span class="alert-icon">&#x26a0;&#xfe0f;</span>
+        <div data-i18n="checkin.noconfig">No AEGIS profile found. Please complete the <a href="setup.html" style="color: inherit; font-weight: 600;">Setup</a> first.</div>
+      </div>
+
+      <!-- Passphrase Input Card -->
       <div class="card" id="checkinCard">
         <div class="card-header">
-          <h2 class="card-title">🔑 Passphrase eingeben</h2>
-          <p class="card-desc">Gib deine Passphrase ein, um ein Check-in-Token zu generieren. Sende das Token an deine Guardians.</p>
+          <h2 class="card-title" data-i18n="checkin.passphrase.title">Enter Passphrase</h2>
+          <p class="card-desc" data-i18n="checkin.passphrase.desc">Enter your passphrase to generate a check-in token. Send the token to your guardians.</p>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Passphrase</label>
-          <input type="password" id="checkinPass" class="form-input form-input-mono" 
-                 placeholder="Deine Passphrase..." autocomplete="off"
-                 onkeydown="if(event.key==='Enter') performCheckin()">
+          <label class="form-label" data-i18n="checkin.passphrase.label">Passphrase</label>
+          <input type="password" id="checkinPass" class="form-input form-input-mono"
+                 data-i18n-placeholder="checkin.passphrase.placeholder" placeholder="Your passphrase..."
+                 autocomplete="off">
         </div>
 
         <div class="alert alert-warning hidden" id="checkinError">
-          <span class="alert-icon">⚠️</span>
+          <span class="alert-icon">&#x26a0;&#xfe0f;</span>
           <span id="checkinErrorText"></span>
         </div>
 
-        <button class="btn btn-primary btn-block btn-lg" onclick="performCheckin()">✓ Check-in durchführen</button>
+        <button class="btn btn-primary btn-block btn-lg" id="checkinBtn" data-i18n="checkin.btn.checkin">Perform Check-in</button>
       </div>
 
+      <!-- Token Result Section -->
       <div id="tokenResult" class="hidden">
         <div class="token-display" id="tokenDisplay">
-          <div style="font-size: 14px; font-weight: 500; color: var(--text-secondary);">Dein Check-in Token</div>
-          <div class="token-code" id="tokenCode">—</div>
-          <div class="token-time" id="tokenTime">—</div>
+          <div style="font-size: 14px; font-weight: 500; color: var(--text-secondary);" data-i18n="checkin.token.label">Your Check-in Token</div>
+          <div class="token-code" id="tokenCode">&mdash;</div>
+          <div class="token-time" id="tokenTime">&mdash;</div>
         </div>
 
         <div class="card">
-          <h3 class="card-title mb-4">Token an Guardians senden</h3>
-          <p class="card-desc mb-4">Kopiere das vollständige Token und sende es an deine Guardians. Sie können es auf der Guardian-Seite verifizieren.</p>
+          <h3 class="card-title mb-4" data-i18n="checkin.token.send.title">Send Token to Guardians</h3>
+          <p class="card-desc mb-4" data-i18n="checkin.token.send.desc">Copy the full token and send it to your guardians. They can verify it on the Guardian page.</p>
           <div class="hash-display" id="fullToken" style="font-size: 11px;">
-            <button class="copy-btn" onclick="copyToken()">Kopieren</button>
-            <span id="fullTokenText">—</span>
+            <button class="copy-btn" id="copyBtnInline"></button>
+            <span id="fullTokenText">&mdash;</span>
           </div>
           <div class="btn-group" style="justify-content: center;">
-            <button class="btn btn-secondary" onclick="copyToken()">📋 Token kopieren</button>
-            <button class="btn btn-secondary" onclick="downloadToken()">💾 Als Datei speichern</button>
+            <button class="btn btn-secondary" id="copyTokenBtn"></button>
+            <button class="btn btn-secondary" id="saveTokenBtn"></button>
           </div>
         </div>
 
         <div class="alert alert-info mt-4">
-          <span class="alert-icon">ℹ️</span>
-          <div><strong>Nächstes Check-in:</strong> <span id="nextCheckin">—</span><br>Sende das Token über einen sicheren Kanal (Signal, persönlich, etc.)</div>
+          <span class="alert-icon">&#x2139;&#xfe0f;</span>
+          <div><span data-i18n="checkin.token.next"><strong>Next check-in:</strong></span> <span id="nextCheckin">&mdash;</span><br><span data-i18n="checkin.token.channel">Send the token via a secure channel (Signal, in person, etc.)</span></div>
         </div>
       </div>
 
+      <!-- History Card -->
       <div class="card mt-6" id="historyCard">
-        <h3 class="card-title">Letzte Check-ins</h3>
-        <div id="checkinHistory" class="mt-4 text-sm text-muted">Noch keine Check-ins durchgeführt.</div>
+        <h3 class="card-title" data-i18n="checkin.history.title">Recent Check-ins</h3>
+        <div id="checkinHistory" class="mt-4 text-sm text-muted"></div>
       </div>
     </main>
 
-    <footer class="aegis-footer">AEGIS v1.0 — Keine Daten verlassen deinen Browser</footer>
+    <footer class="aegis-footer">
+      <div class="footer-links">
+        <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
+        <span class="footer-sep">|</span>
+        <a href="imprint.html" data-i18n="footer.imprint">Imprint</a>
+        <span class="footer-sep">|</span>
+        <a href="howitworks.html" data-i18n="footer.howitworks">How It Works</a>
+      </div>
+      <p data-i18n="footer.text">AEGIS — No data leaves your browser</p>
+    </footer>
+
   </div>
 
-  <script src="crypto.js"></script>
-  <script src="checkin.js"></script>
+  <script src="js/crypto.js"></script>
+  <script src="js/checkin.js"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/main.js"></script>
   <script>
     'use strict';
-    let config = null;
-    let lastToken = null;
+
+    var config = null;
+    var lastToken = null;
+
+    document.addEventListener('aegis-ready', function () {
+      init();
+    });
 
     function init() {
-      const stored = localStorage.getItem('aegis_config');
-      if (!stored) { document.getElementById('noConfigAlert').style.display = 'flex'; return; }
+      var stored = localStorage.getItem('aegis_config');
+      if (!stored) {
+        document.getElementById('noConfigAlert').style.display = 'flex';
+        renderHistory();
+        return;
+      }
       config = JSON.parse(stored);
-      loadHistory();
+      updateStatusCard();
+      renderHistory();
+      updateButtonLabels();
     }
 
-    async function performCheckin() {
-      if (!config) { document.getElementById('noConfigAlert').style.display = 'flex'; return; }
-      const input = document.getElementById('checkinPass').value;
-      if (!input) { showCheckinError('Bitte Passphrase eingeben.'); return; }
+    function updateButtonLabels() {
+      document.getElementById('copyBtnInline').textContent = AegisLang.t('copy');
+      document.getElementById('copyTokenBtn').innerHTML = '&#x1f4cb; ' + AegisLang.t('checkin.token.copy');
+      document.getElementById('saveTokenBtn').innerHTML = '&#x1f4be; ' + AegisLang.t('checkin.token.save');
+    }
 
-      const inputHash = await AegisCrypto.sha256(input);
-      const isNormal = inputHash === config.passphraseHash;
-      const isDuress = inputHash === config.duressHash;
-      if (!isNormal && !isDuress) { showCheckinError('Ungültige Passphrase.'); return; }
+    function updateStatusCard() {
+      if (!config) return;
+      var lastCheckinTime = localStorage.getItem('aegis_last_checkin');
+      var statusCard = document.getElementById('statusCard');
+      var level = AegisCheckin.getEscalationLevel(lastCheckinTime, config.interval);
+      var escalation = AegisCheckin.ESCALATION_LABELS[level] || AegisCheckin.ESCALATION_LABELS[4];
+
+      statusCard.style.display = '';
+      statusCard.className = 'card status-card';
+      if (level === 1) {
+        statusCard.classList.add('warn');
+      } else if (level >= 2) {
+        statusCard.classList.add('danger');
+      }
+
+      document.getElementById('statusIcon').textContent = escalation.icon;
+      document.getElementById('statusIcon').style.color = escalation.color;
+      document.getElementById('statusLevel').textContent = AegisLang.t('escalation.' + level);
+      document.getElementById('statusLevel').style.color = escalation.color;
+
+      var locale = AegisLang.getLocale();
+      if (lastCheckinTime) {
+        document.getElementById('statusLastCheckin').textContent = new Date(lastCheckinTime).toLocaleString(locale);
+        var nextDue = new Date(new Date(lastCheckinTime).getTime() + config.interval * 60 * 60 * 1000);
+        document.getElementById('statusNextDue').textContent = nextDue.toLocaleString(locale);
+
+        var now = Date.now();
+        var start = new Date(lastCheckinTime).getTime();
+        var end = nextDue.getTime();
+        var elapsed = now - start;
+        var total = end - start;
+        var percent = Math.min(Math.max((elapsed / total) * 100, 0), 100);
+        var progressFill = document.getElementById('progressFill');
+        progressFill.style.width = percent + '%';
+        if (level === 0) {
+          progressFill.style.backgroundColor = '#22c55e';
+        } else if (level === 1) {
+          progressFill.style.backgroundColor = '#eab308';
+        } else {
+          progressFill.style.backgroundColor = '#ef4444';
+        }
+      } else {
+        document.getElementById('statusLastCheckin').textContent = AegisLang.t('checkin.status.none');
+        document.getElementById('statusNextDue').textContent = '—';
+        document.getElementById('progressFill').style.width = '100%';
+        document.getElementById('progressFill').style.backgroundColor = '#dc2626';
+      }
+    }
+
+    document.getElementById('checkinPass').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') performCheckin();
+    });
+
+    document.getElementById('checkinBtn').addEventListener('click', function () {
+      performCheckin();
+    });
+
+    async function performCheckin() {
+      if (!config) {
+        document.getElementById('noConfigAlert').style.display = 'flex';
+        return;
+      }
+      var input = document.getElementById('checkinPass').value;
+      if (!input) {
+        showCheckinError(AegisLang.t('checkin.error.empty'));
+        return;
+      }
+
+      var inputHash = await AegisCrypto.sha256(input);
+      var isNormal = inputHash === config.passphraseHash;
+      var isDuress = inputHash === config.duressHash;
+      if (!isNormal && !isDuress) {
+        showCheckinError(AegisLang.t('checkin.error.invalid'));
+        return;
+      }
       hideCheckinError();
 
-      const timestamp = new Date().toISOString();
-      const nonce = AegisCrypto.generateId(8);
-      const payload = { t: timestamp, n: nonce, p: config.packageId, _d: isDuress ? '1' : '0' };
-      const tokenString = JSON.stringify(payload);
-      const tokenHash = await AegisCrypto.sha256(tokenString);
+      var timestamp = new Date().toISOString();
+      var nonce = AegisCrypto.generateId(8);
+      var payload = { t: timestamp, n: nonce, p: config.packageId, _d: isDuress ? '1' : '0' };
+      var tokenString = JSON.stringify(payload);
+      var tokenHash = await AegisCrypto.sha256(tokenString);
 
-      const token = { aegis_checkin: true, version: '1.0.0', timestamp, package: config.packageId, token: tokenHash, payload: btoa(tokenString) };
+      var token = {
+        aegis_checkin: true,
+        version: '1.0.0',
+        timestamp: timestamp,
+        package: config.packageId,
+        token: tokenHash,
+        payload: btoa(tokenString)
+      };
       lastToken = token;
 
-      const displayCode = `AEGIS-${tokenHash.substring(0, 8).toUpperCase()}-${timestamp.split('T')[0]}`;
+      var locale = AegisLang.getLocale();
+      var displayCode = 'AEGIS-' + tokenHash.substring(0, 8).toUpperCase() + '-' + timestamp.split('T')[0];
       document.getElementById('tokenCode').textContent = displayCode;
-      document.getElementById('tokenTime').textContent = new Date(timestamp).toLocaleString('de-DE');
+      document.getElementById('tokenTime').textContent = new Date(timestamp).toLocaleString(locale);
       document.getElementById('fullTokenText').textContent = JSON.stringify(token);
 
-      const nextDate = new Date(Date.now() + config.interval * 60 * 60 * 1000);
-      document.getElementById('nextCheckin').textContent = nextDate.toLocaleString('de-DE');
+      var nextDate = new Date(Date.now() + config.interval * 60 * 60 * 1000);
+      document.getElementById('nextCheckin').textContent = nextDate.toLocaleString(locale);
 
       document.getElementById('tokenResult').classList.remove('hidden');
       document.getElementById('tokenResult').classList.add('animate-in');
       saveCheckin(timestamp, displayCode);
+      updateStatusCard();
       document.getElementById('checkinPass').value = '';
       document.getElementById('tokenResult').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function showCheckinError(msg) { document.getElementById('checkinError').classList.remove('hidden'); document.getElementById('checkinErrorText').textContent = msg; }
-    function hideCheckinError() { document.getElementById('checkinError').classList.add('hidden'); }
+    function showCheckinError(msg) {
+      document.getElementById('checkinError').classList.remove('hidden');
+      document.getElementById('checkinErrorText').textContent = msg;
+    }
+
+    function hideCheckinError() {
+      document.getElementById('checkinError').classList.add('hidden');
+    }
 
     function copyToken() {
       if (!lastToken) return;
-      navigator.clipboard.writeText(JSON.stringify(lastToken)).then(() => {
-        document.querySelectorAll('.copy-btn').forEach(btn => { btn.textContent = '✓ Kopiert'; setTimeout(() => btn.textContent = 'Kopieren', 2000); });
+      navigator.clipboard.writeText(JSON.stringify(lastToken)).then(function () {
+        var copyText = AegisLang.t('copied');
+        document.getElementById('copyBtnInline').textContent = copyText;
+        document.getElementById('copyTokenBtn').innerHTML = '&#x2714; ' + copyText;
+        setTimeout(function () {
+          document.getElementById('copyBtnInline').textContent = AegisLang.t('copy');
+          document.getElementById('copyTokenBtn').innerHTML = '&#x1f4cb; ' + AegisLang.t('checkin.token.copy');
+        }, 2000);
       });
     }
 
+    document.getElementById('copyBtnInline').addEventListener('click', function () {
+      copyToken();
+    });
+
+    document.getElementById('copyTokenBtn').addEventListener('click', function () {
+      copyToken();
+    });
+
+    document.getElementById('saveTokenBtn').addEventListener('click', function () {
+      downloadToken();
+    });
+
     function downloadToken() {
       if (!lastToken) return;
-      const blob = new Blob([JSON.stringify(lastToken, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = `aegis-checkin-${new Date().toISOString().split('T')[0]}.json`; a.click();
+      var blob = new Blob([JSON.stringify(lastToken, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'aegis-checkin-' + new Date().toISOString().split('T')[0] + '.json';
+      a.click();
       URL.revokeObjectURL(url);
     }
 
     function saveCheckin(timestamp, code) {
-      let history = JSON.parse(localStorage.getItem('aegis_history') || '[]');
-      history.unshift({ timestamp, code });
+      var history = JSON.parse(localStorage.getItem('aegis_history') || '[]');
+      history.unshift({ timestamp: timestamp, code: code });
       if (history.length > 20) history = history.slice(0, 20);
       localStorage.setItem('aegis_history', JSON.stringify(history));
       localStorage.setItem('aegis_last_checkin', timestamp);
-      loadHistory();
+      renderHistory();
     }
 
-    function loadHistory() {
-      const history = JSON.parse(localStorage.getItem('aegis_history') || '[]');
-      const container = document.getElementById('checkinHistory');
-      if (history.length === 0) { container.textContent = 'Noch keine Check-ins durchgeführt.'; return; }
-      container.innerHTML = history.slice(0, 10).map(h => `
-        <div class="file-item" style="margin-bottom: 6px;">
-          <div class="file-item-info">
-            <span class="file-item-icon">✅</span>
-            <span class="file-item-name mono" style="font-size: 12px;">${h.code}</span>
-          </div>
-          <span class="file-item-size">${new Date(h.timestamp).toLocaleString('de-DE')}</span>
-        </div>
-      `).join('');
+    function renderHistory() {
+      var history = JSON.parse(localStorage.getItem('aegis_history') || '[]');
+      var container = document.getElementById('checkinHistory');
+      if (history.length === 0) {
+        container.textContent = AegisLang.t('checkin.history.empty');
+        return;
+      }
+      var locale = AegisLang.getLocale();
+      container.innerHTML = history.slice(0, 10).map(function (h) {
+        return '<div class="file-item" style="margin-bottom: 6px;">' +
+          '<div class="file-item-info">' +
+          '<span class="file-item-icon">&#x2705;</span>' +
+          '<span class="file-item-name mono" style="font-size: 12px;">' + escapeHtml(h.code) + '</span>' +
+          '</div>' +
+          '<span class="file-item-size">' + new Date(h.timestamp).toLocaleString(locale) + '</span>' +
+          '</div>';
+      }).join('');
     }
 
-    init();
+    document.addEventListener('aegis-lang-change', function () {
+      renderHistory();
+      updateStatusCard();
+      updateButtonLabels();
+    });
   </script>
 </body>
 </html>
