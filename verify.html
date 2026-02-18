@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AEGIS — Verifizierung</title>
-  <link rel="stylesheet" href="style.css">
+  <title>AEGIS — Proof of Existence</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="aegis-app">
@@ -14,54 +14,76 @@
         <div class="aegis-logo-icon">A</div>
         <span class="aegis-logo-text">AEGIS</span>
       </a>
-      <nav class="aegis-nav">
-        <a href="setup.html">Setup</a>
-        <a href="checkin.html">Check-in</a>
-        <a href="guardian.html">Guardian</a>
-        <a href="verify.html" class="active">Verify</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="aegis-nav" id="aegisNav">
+        <div class="nav-links">
+          <a href="index.html" data-i18n="nav.home">Home</a>
+          <a href="setup.html" data-i18n="nav.setup">Setup</a>
+          <a href="checkin.html" data-i18n="nav.checkin">Check-in</a>
+          <a href="guardian.html" data-i18n="nav.guardian">Guardian</a>
+          <a href="verify.html" data-i18n="nav.verify">Verify</a>
+          <a href="howitworks.html" data-i18n="nav.howitworks">How It Works</a>
+          <div class="nav-divider"></div>
+          <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+          <a href="imprint.html" data-i18n="nav.imprint">Imprint</a>
+        </div>
+        <div class="lang-toggle">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
       </nav>
     </header>
 
     <main class="aegis-main">
-      <h1>Proof of Existence</h1>
-      <p class="subtitle">Verifiziere, dass Informationen zu einem bestimmten Zeitpunkt existiert haben.</p>
+      <h1 data-i18n="verify.title">Proof of Existence</h1>
+      <p class="subtitle" data-i18n="verify.subtitle">Verify that information existed at a specific point in time.</p>
 
+      <!-- Card 1: Hash File -->
       <div class="card">
         <div class="card-header">
-          <h2 class="card-title">#️⃣ Datei hashen</h2>
-          <p class="card-desc">Berechne den SHA-256-Hash einer Datei. Vergleiche ihn mit einem veröffentlichten Proof of Existence, um zu beweisen, dass die Datei unverändert ist.</p>
+          <h2 class="card-title" data-i18n="verify.hash.title">Hash File</h2>
+          <p class="card-desc" data-i18n="verify.hash.desc">Calculate the SHA-256 hash of a file. Compare it with a published Proof of Existence to prove the file has not been altered.</p>
         </div>
 
         <div class="upload-zone" id="hashUploadZone" style="padding: 32px;">
-          <div class="upload-zone-icon">📎</div>
-          <div class="upload-zone-text">Datei zum Hashen hierher ziehen</div>
-          <div class="upload-zone-hint">Die Datei wird lokal verarbeitet und nicht hochgeladen</div>
+          <div class="upload-zone-icon">&#x1f4ce;</div>
+          <div class="upload-zone-text" data-i18n="verify.hash.dropzone">Drag a file here to hash it</div>
+          <div class="upload-zone-hint" data-i18n="verify.hash.dropzone.hint">The file is processed locally and never uploaded</div>
           <input type="file" id="hashFileInput" style="display:none">
         </div>
 
         <div id="hashResult" class="hidden mt-6 animate-in">
-          <label class="form-label">SHA-256 Hash</label>
+          <label class="form-label" data-i18n="verify.hash.result.label">SHA-256 Hash</label>
           <div class="hash-display">
-            <button class="copy-btn" onclick="copyFileHash()">Kopieren</button>
-            <span id="fileHash">—</span>
+            <button class="copy-btn" onclick="copyFileHash()" data-i18n="verify.hash.copy">Copy</button>
+            <span id="fileHash">&mdash;</span>
           </div>
-          <div class="text-sm text-muted mt-4" id="hashFileInfo">—</div>
+          <div class="text-sm text-muted mt-4" id="hashFileInfo">&mdash;</div>
         </div>
       </div>
 
+      <!-- Card 2: Compare Hashes -->
       <div class="card">
         <div class="card-header">
-          <h2 class="card-title">🔎 Hashes vergleichen</h2>
-          <p class="card-desc">Vergleiche zwei SHA-256-Hashes, um zu prüfen ob sie übereinstimmen.</p>
+          <h2 class="card-title" data-i18n="verify.compare.title">Compare Hashes</h2>
+          <p class="card-desc" data-i18n="verify.compare.desc">Compare two SHA-256 hashes to check if they match.</p>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Hash 1 (z.B. veröffentlichter Proof)</label>
-          <input type="text" id="hash1" class="form-input form-input-mono" placeholder="SHA-256 Hash einfügen..." oninput="compareHashes()">
+          <label class="form-label" data-i18n="verify.compare.hash1.label">Hash 1 (published proof)</label>
+          <input type="text" id="hash1" class="form-input form-input-mono"
+                 data-i18n-placeholder="verify.compare.hash1.placeholder" placeholder="Paste SHA-256 hash..."
+                 oninput="compareHashes()">
         </div>
         <div class="form-group">
-          <label class="form-label">Hash 2 (z.B. berechneter Hash)</label>
-          <input type="text" id="hash2" class="form-input form-input-mono" placeholder="SHA-256 Hash einfügen..." oninput="compareHashes()">
+          <label class="form-label" data-i18n="verify.compare.hash2.label">Hash 2 (calculated hash)</label>
+          <input type="text" id="hash2" class="form-input form-input-mono"
+                 data-i18n-placeholder="verify.compare.hash2.placeholder" placeholder="Paste SHA-256 hash..."
+                 oninput="compareHashes()">
         </div>
 
         <div id="compareResult" class="hidden">
@@ -72,123 +94,154 @@
         </div>
       </div>
 
+      <!-- Card 3: Verify Package -->
       <div class="card">
         <div class="card-header">
-          <h2 class="card-title">📦 Paket-Integrität prüfen</h2>
-          <p class="card-desc">Lade ein AEGIS-Paket und prüfe, ob der Combined Proof Hash mit einem veröffentlichten Hash übereinstimmt.</p>
+          <h2 class="card-title" data-i18n="verify.package.title">Verify Package Integrity</h2>
+          <p class="card-desc" data-i18n="verify.package.desc">Load an AEGIS package and verify that the Combined Proof Hash matches a published hash.</p>
         </div>
 
         <div class="form-group">
-          <label class="form-label">AEGIS Paket-Datei</label>
+          <label class="form-label" data-i18n="verify.package.file.label">AEGIS Package File</label>
           <input type="file" id="verifyPackageFile" accept=".json" class="form-input">
         </div>
 
-        <button class="btn btn-primary btn-block" onclick="verifyPackage()">Paket prüfen</button>
+        <button class="btn btn-primary btn-block" onclick="verifyPackage()" data-i18n="verify.package.btn">Verify Package</button>
 
         <div id="packageVerifyResult" class="hidden mt-6">
           <div class="alert alert-info" id="packageInfo" style="display:none">
-            <span class="alert-icon">📦</span>
+            <span class="alert-icon">&#x1f4e6;</span>
             <div id="packageInfoText"></div>
           </div>
         </div>
       </div>
 
-      <div class="card" style="background: var(--bg-input); border: none; box-shadow: none;">
-        <h3 class="card-title">Was ist Proof of Existence?</h3>
-        <p class="card-desc mt-4" style="line-height: 1.7;">
-          Ein Proof of Existence beweist, dass bestimmte Daten zu einem bestimmten 
-          Zeitpunkt existiert haben — ohne den Inhalt zu verraten. Dafür wird ein 
-          kryptografischer Hash (SHA-256) der Daten berechnet und öffentlich gepostet 
-          (z.B. auf Twitter, einem Blog, oder der Bitcoin-Blockchain via OpenTimestamps).
-          Jede noch so kleine Änderung an den Originaldaten erzeugt einen komplett 
-          anderen Hash. So kann jeder verifizieren, dass die Daten seit dem Posting 
-          nicht verändert wurden.
-        </p>
+      <!-- Card 4: Explanation -->
+      <div class="content-card" style="background: var(--bg-secondary);">
+        <h3 class="card-title" data-i18n="verify.explanation.title">What is Proof of Existence?</h3>
+        <p class="card-desc mt-4" style="line-height: 1.7;" data-i18n="verify.explanation.text">A Proof of Existence proves that certain data existed at a specific point in time — without revealing the content. A cryptographic hash (SHA-256) of the data is calculated and published publicly (e.g. on Twitter, a blog, or the Bitcoin blockchain via OpenTimestamps). Even the slightest change to the original data produces a completely different hash. This allows anyone to verify that the data has not been altered since the publication.</p>
       </div>
     </main>
 
-    <footer class="aegis-footer">AEGIS v1.0 — Keine Daten verlassen deinen Browser</footer>
+    <footer class="aegis-footer">
+      <div class="footer-links">
+        <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
+        <span class="footer-sep">|</span>
+        <a href="imprint.html" data-i18n="footer.imprint">Imprint</a>
+        <span class="footer-sep">|</span>
+        <a href="howitworks.html" data-i18n="footer.howitworks">How It Works</a>
+      </div>
+      <p data-i18n="footer.text">AEGIS &mdash; No data leaves your browser</p>
+    </footer>
+
   </div>
 
-  <script src="crypto.js"></script>
+  <script src="js/crypto.js"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/main.js"></script>
   <script>
     'use strict';
 
-    const hashZone = document.getElementById('hashUploadZone');
-    const hashInput = document.getElementById('hashFileInput');
-    hashZone.addEventListener('click', () => hashInput.click());
-    hashZone.addEventListener('dragover', (e) => { e.preventDefault(); hashZone.classList.add('drag-over'); });
-    hashZone.addEventListener('dragleave', () => hashZone.classList.remove('drag-over'));
-    hashZone.addEventListener('drop', (e) => { e.preventDefault(); hashZone.classList.remove('drag-over'); if (e.dataTransfer.files.length) hashFile(e.dataTransfer.files[0]); });
-    hashInput.addEventListener('change', () => { if (hashInput.files.length) hashFile(hashInput.files[0]); });
+    document.addEventListener('aegis-ready', function () {
+      var hashZone = document.getElementById('hashUploadZone');
+      var hashInput = document.getElementById('hashFileInput');
+
+      hashZone.addEventListener('click', function () {
+        hashInput.click();
+      });
+
+      hashZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        hashZone.classList.add('drag-over');
+      });
+
+      hashZone.addEventListener('dragleave', function () {
+        hashZone.classList.remove('drag-over');
+      });
+
+      hashZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        hashZone.classList.remove('drag-over');
+        if (e.dataTransfer.files.length) {
+          hashFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      hashInput.addEventListener('change', function () {
+        if (hashInput.files.length) {
+          hashFile(hashInput.files[0]);
+        }
+      });
+    });
 
     async function hashFile(file) {
-      const buffer = await file.arrayBuffer();
-      const hash = await AegisCrypto.sha256(buffer);
+      var buffer = await file.arrayBuffer();
+      var hash = await AegisCrypto.sha256(buffer);
       document.getElementById('fileHash').textContent = hash;
-      document.getElementById('hashFileInfo').textContent = `${file.name} — ${formatSize(file.size)}`;
+      document.getElementById('hashFileInfo').textContent = file.name + ' \u2014 ' + formatSize(file.size);
       document.getElementById('hashResult').classList.remove('hidden');
       document.getElementById('hash2').value = hash;
       compareHashes();
     }
 
     function copyFileHash() {
-      navigator.clipboard.writeText(document.getElementById('fileHash').textContent).then(() => {
-        const btn = document.querySelector('#hashResult .copy-btn');
-        btn.textContent = '✓ Kopiert'; setTimeout(() => btn.textContent = 'Kopieren', 2000);
+      navigator.clipboard.writeText(document.getElementById('fileHash').textContent).then(function () {
+        var btn = document.querySelector('#hashResult .copy-btn');
+        btn.textContent = '\u2713 ' + AegisLang.t('copied');
+        setTimeout(function () {
+          btn.textContent = AegisLang.t('copy');
+        }, 2000);
       });
     }
 
     function compareHashes() {
-      const h1 = document.getElementById('hash1').value.trim().toLowerCase();
-      const h2 = document.getElementById('hash2').value.trim().toLowerCase();
-      if (!h1 || !h2) { document.getElementById('compareResult').classList.add('hidden'); return; }
+      var h1 = document.getElementById('hash1').value.trim().toLowerCase();
+      var h2 = document.getElementById('hash2').value.trim().toLowerCase();
+      if (!h1 || !h2) {
+        document.getElementById('compareResult').classList.add('hidden');
+        return;
+      }
       document.getElementById('compareResult').classList.remove('hidden');
-      const result = document.getElementById('matchResult');
+      var result = document.getElementById('matchResult');
       if (h1 === h2) {
         result.className = 'alert alert-success';
-        document.getElementById('matchIcon').textContent = '✅';
-        document.getElementById('matchText').innerHTML = '<strong>Übereinstimmung!</strong> Die Hashes sind identisch. Die Daten wurden nicht verändert.';
+        document.getElementById('matchIcon').textContent = '\u2705';
+        document.getElementById('matchText').innerHTML = '<strong>' + AegisLang.t('verify.compare.match') + '</strong> ' + AegisLang.t('verify.compare.match.detail');
       } else {
         result.className = 'alert alert-danger';
-        document.getElementById('matchIcon').textContent = '❌';
-        document.getElementById('matchText').innerHTML = '<strong>Keine Übereinstimmung.</strong> Die Hashes unterscheiden sich.';
+        document.getElementById('matchIcon').textContent = '\u274c';
+        document.getElementById('matchText').innerHTML = '<strong>' + AegisLang.t('verify.compare.nomatch') + '</strong> ' + AegisLang.t('verify.compare.nomatch.detail');
       }
     }
 
     async function verifyPackage() {
-      const fileInput = document.getElementById('verifyPackageFile');
+      var fileInput = document.getElementById('verifyPackageFile');
       document.getElementById('packageVerifyResult').classList.remove('hidden');
-      const info = document.getElementById('packageInfo');
+      var info = document.getElementById('packageInfo');
       info.style.display = 'none';
       if (!fileInput.files.length) return;
 
       try {
-        const content = await fileInput.files[0].text();
-        const pkg = JSON.parse(content);
-        if (!pkg.aegis) throw new Error('Keine gültige AEGIS-Paketdatei.');
+        var content = await fileInput.files[0].text();
+        var pkg = JSON.parse(content);
+        if (!pkg.aegis) throw new Error(AegisLang.t('verify.package.error.invalid'));
         info.style.display = 'flex';
         info.className = 'alert alert-info';
-        document.getElementById('packageInfoText').innerHTML = `
-          <strong>Paket-ID:</strong> ${pkg.id}<br>
-          <strong>Erstellt:</strong> ${new Date(pkg.created).toLocaleString('de-DE')}<br>
-          <strong>Version:</strong> ${pkg.version}<br>
-          <strong>Dateien:</strong> ${pkg.files?.length || 0}<br>
-          <strong>Combined Proof Hash:</strong><br>
-          <code class="mono" style="font-size: 11px; word-break: break-all;">${pkg.combinedProofHash}</code>`;
+        var locale = AegisLang.getLocale();
+        document.getElementById('packageInfoText').innerHTML =
+          '<strong>' + AegisLang.t('verify.package.info.id') + ':</strong> ' + escapeHtml(pkg.id) + '<br>' +
+          '<strong>' + AegisLang.t('verify.package.info.created') + ':</strong> ' + new Date(pkg.created).toLocaleString(locale) + '<br>' +
+          '<strong>' + AegisLang.t('verify.package.info.version') + ':</strong> ' + escapeHtml(pkg.version) + '<br>' +
+          '<strong>' + AegisLang.t('verify.package.info.files') + ':</strong> ' + (pkg.files ? pkg.files.length : 0) + '<br>' +
+          '<strong>' + AegisLang.t('verify.package.info.proofhash') + ':</strong><br>' +
+          '<code class="mono" style="font-size: 11px; word-break: break-all;">' + escapeHtml(pkg.combinedProofHash) + '</code>';
         document.getElementById('hash1').value = pkg.combinedProofHash;
         compareHashes();
       } catch (e) {
         info.style.display = 'flex';
         info.className = 'alert alert-danger';
-        document.getElementById('packageInfoText').textContent = 'Fehler: ' + e.message;
+        document.getElementById('packageInfoText').textContent = AegisLang.t('verify.package.error') + ': ' + e.message;
       }
-    }
-
-    function formatSize(bytes) {
-      if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
   </script>
 </body>

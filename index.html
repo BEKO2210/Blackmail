@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AEGIS — Dead Man's Switch</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="description" content="AEGIS — Client-side encrypted Dead Man's Switch. Schütze deine Informationen mit verteilter Verschlüsselung.">
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="AEGIS — Client-side encrypted Dead Man's Switch. Protect your information with distributed encryption.">
 </head>
 <body>
   <div class="aegis-app">
@@ -14,96 +14,96 @@
       <a href="index.html" class="aegis-logo">
         <div class="aegis-logo-icon">A</div>
         <span class="aegis-logo-text">AEGIS</span>
-        <span class="aegis-logo-badge">v1.0</span>
       </a>
-      <nav class="aegis-nav">
-        <a href="setup.html">Setup</a>
-        <a href="checkin.html">Check-in</a>
-        <a href="guardian.html">Guardian</a>
-        <a href="verify.html">Verify</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="aegis-nav" id="aegisNav">
+        <div class="nav-links">
+          <a href="index.html" data-i18n="nav.home">Home</a>
+          <a href="setup.html" data-i18n="nav.setup">Setup</a>
+          <a href="checkin.html" data-i18n="nav.checkin">Check-in</a>
+          <a href="guardian.html" data-i18n="nav.guardian">Guardian</a>
+          <a href="verify.html" data-i18n="nav.verify">Verify</a>
+          <a href="howitworks.html" data-i18n="nav.howitworks">How It Works</a>
+          <div class="nav-divider"></div>
+          <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+          <a href="imprint.html" data-i18n="nav.imprint">Imprint</a>
+        </div>
+        <div class="lang-toggle">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
       </nav>
     </header>
 
     <main class="aegis-main">
 
       <section class="hero">
-        <div class="hero-shield">🛡️</div>
-        <h1>Deine Versicherung.<br>Clientseitig verschlüsselt.</h1>
-        <p class="subtitle">
-          AEGIS ist ein Dead Man's Switch — ein System das deine 
-          Informationen schützt und automatisch freigibt, wenn du 
-          dich nicht mehr melden kannst. Alles läuft in deinem Browser. 
-          Kein Server. Keine Accounts. Kein Vertrauen nötig.
-        </p>
-        <a href="setup.html" class="btn btn-dark btn-lg">
-          ↳ Einrichtung starten
-        </a>
+        <div class="hero-shield">&#x1f6e1;&#xfe0f;</div>
+        <h1 data-i18n="home.title">Your Insurance.<br>Client-Side Encrypted.</h1>
+        <p class="subtitle" data-i18n="home.subtitle">AEGIS is a Dead Man's Switch — a system that protects your information and automatically releases it if you can no longer check in. Everything runs in your browser. No server. No accounts. No trust required.</p>
+        <a href="setup.html" class="btn btn-primary btn-lg" data-i18n="home.cta">Start Setup</a>
       </section>
 
       <section class="feature-grid">
         <div class="feature-card">
-          <div class="feature-icon">🔐</div>
-          <div class="feature-title">AES-256 Verschlüsselung</div>
-          <div class="feature-desc">
-            Militärgrad-Verschlüsselung direkt im Browser. 
-            Deine Daten verlassen nie dein Gerät unverschlüsselt.
-          </div>
+          <div class="feature-icon">&#x1f510;</div>
+          <div class="feature-title" data-i18n="home.feature.encryption.title">AES-256 Encryption</div>
+          <div class="feature-desc" data-i18n="home.feature.encryption.desc">Military-grade encryption directly in your browser. Your data never leaves your device unencrypted.</div>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🧩</div>
-          <div class="feature-title">Shamir's Secret Sharing</div>
-          <div class="feature-desc">
-            Der Schlüssel wird in Fragmente aufgeteilt. 
-            Nur gemeinsam können Vertrauenspersonen entschlüsseln.
-          </div>
+          <div class="feature-icon">&#x1f9e9;</div>
+          <div class="feature-title" data-i18n="home.feature.shamir.title">Shamir's Secret Sharing</div>
+          <div class="feature-desc" data-i18n="home.feature.shamir.desc">The key is split into fragments. Only together can your trusted guardians decrypt.</div>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">⏰</div>
-          <div class="feature-title">Dead Man's Switch</div>
-          <div class="feature-desc">
-            Regelmäßiges Check-in hält das System still. 
-            Bleibt es aus, startet die Eskalation automatisch.
-          </div>
+          <div class="feature-icon">&#x23f0;</div>
+          <div class="feature-title" data-i18n="home.feature.deadman.title">Dead Man's Switch</div>
+          <div class="feature-desc" data-i18n="home.feature.deadman.desc">Regular check-ins keep the system dormant. If they stop, escalation begins automatically.</div>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🆘</div>
-          <div class="feature-title">Duress-Code</div>
-          <div class="feature-desc">
-            Ein spezieller Code signalisiert deinen Guardians 
-            heimlich, dass du unter Zwang handelst.
-          </div>
+          <div class="feature-icon">&#x1f198;</div>
+          <div class="feature-title" data-i18n="home.feature.duress.title">Duress Code</div>
+          <div class="feature-desc" data-i18n="home.feature.duress.desc">A special code secretly signals your guardians that you are acting under coercion.</div>
         </div>
       </section>
 
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Wie funktioniert AEGIS?</h3>
+          <h3 class="card-title" data-i18n="home.howitworks.title">How does AEGIS work?</h3>
         </div>
         <div class="card-desc" style="line-height: 1.8;">
-          <strong>1. Einrichten:</strong> Lade deine Beweise hoch, wähle eine Passphrase und eine Duress-Passphrase. Alles wird in deinem Browser verschlüsselt.<br><br>
-          <strong>2. Verteilen:</strong> Der Entschlüsselungsschlüssel wird in Fragmente aufgeteilt. Jeder Guardian erhält ein Kit mit seinem Fragment und einer Anleitung.<br><br>
-          <strong>3. Check-in:</strong> Melde dich regelmäßig mit deiner Passphrase. Deine Guardians erhalten ein Token das beweist, dass alles in Ordnung ist.<br><br>
-          <strong>4. Schutz:</strong> Wirst du gezwungen? Nutze den Duress-Code — das Token sieht normal aus, aber deine Guardians erkennen das versteckte Signal.<br><br>
-          <strong>5. Eskalation:</strong> Bleiben Check-ins aus, wissen deine Guardians was zu tun ist. Ihre Fragmente zusammen ergeben den Schlüssel.
+          <span data-i18n="home.howitworks.step1"><strong>1. Setup:</strong> Upload your evidence, choose a passphrase and a duress passphrase. Everything is encrypted in your browser.</span><br><br>
+          <span data-i18n="home.howitworks.step2"><strong>2. Distribute:</strong> The decryption key is split into fragments. Each guardian receives a kit with their fragment and instructions.</span><br><br>
+          <span data-i18n="home.howitworks.step3"><strong>3. Check-in:</strong> Check in regularly with your passphrase. Your guardians receive a token proving everything is fine.</span><br><br>
+          <span data-i18n="home.howitworks.step4"><strong>4. Protection:</strong> Being coerced? Use the duress code — the token looks normal, but your guardians detect the hidden signal.</span><br><br>
+          <span data-i18n="home.howitworks.step5"><strong>5. Escalation:</strong> If check-ins stop, your guardians know what to do. Their fragments together reveal the key.</span>
         </div>
       </div>
 
       <div class="alert alert-info">
-        <span class="alert-icon">ℹ️</span>
-        <div>
-          <strong>100% clientseitig.</strong> Diese App läuft vollständig in deinem Browser. 
-          Es gibt keinen Server, keine Datenbank, keine Accounts. 
-          Du kannst sie offline nutzen — einfach die Dateien herunterladen.
-          Der Quellcode ist offen einsehbar.
-        </div>
+        <span class="alert-icon">&#x2139;&#xfe0f;</span>
+        <div data-i18n="home.alert.clientside"><strong>100% client-side.</strong> This app runs entirely in your browser. There is no server, no database, no accounts. You can use it offline — just download the files. The source code is openly available.</div>
       </div>
 
     </main>
 
     <footer class="aegis-footer">
-      AEGIS v1.0 — Open Source — Keine Daten verlassen deinen Browser
+      <div class="footer-links">
+        <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
+        <span class="footer-sep">|</span>
+        <a href="imprint.html" data-i18n="footer.imprint">Imprint</a>
+        <span class="footer-sep">|</span>
+        <a href="howitworks.html" data-i18n="footer.howitworks">How It Works</a>
+      </div>
+      <p data-i18n="footer.text">AEGIS — No data leaves your browser</p>
     </footer>
 
   </div>
+  <script src="js/lang.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

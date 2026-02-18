@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS — How It Works</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="aegis-app">
+
+    <header class="aegis-header">
+      <a href="index.html" class="aegis-logo">
+        <div class="aegis-logo-icon">A</div>
+        <span class="aegis-logo-text">AEGIS</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="aegis-nav" id="aegisNav">
+        <div class="nav-links">
+          <a href="index.html" data-i18n="nav.home">Home</a>
+          <a href="setup.html" data-i18n="nav.setup">Setup</a>
+          <a href="checkin.html" data-i18n="nav.checkin">Check-in</a>
+          <a href="guardian.html" data-i18n="nav.guardian">Guardian</a>
+          <a href="verify.html" data-i18n="nav.verify">Verify</a>
+          <a href="howitworks.html" data-i18n="nav.howitworks">How It Works</a>
+          <div class="nav-divider"></div>
+          <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+          <a href="imprint.html" data-i18n="nav.imprint">Imprint</a>
+        </div>
+        <div class="lang-toggle">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="aegis-main">
+      <h1 data-i18n="howitworks.title">How It Works</h1>
+      <p class="subtitle" data-i18n="howitworks.subtitle">Understanding AEGIS — a client-side Dead Man's Switch.</p>
+
+      <div class="content-card">
+        <h2 data-i18n="howitworks.what.title">What is a Dead Man's Switch?</h2>
+        <p data-i18n="howitworks.what.text">A Dead Man's Switch is a mechanism that activates automatically when a person fails to perform a regular action. Originally used in trains and industrial equipment, the concept has been adapted for digital security: if you stop checking in regularly, pre-configured actions are triggered — in this case, the release of encrypted evidence to your trusted guardians.</p>
+      </div>
+
+      <div class="content-card">
+        <h2 data-i18n="howitworks.system.title">The AEGIS System</h2>
+
+        <h3 class="step-title" data-i18n="howitworks.system.step1.title">1. Setup</h3>
+        <p data-i18n="howitworks.system.step1.text">You upload your evidence files and choose a strong passphrase. All encryption happens locally in your browser using AES-256-GCM. You also set a duress passphrase — a secondary code for emergencies.</p>
+
+        <h3 class="step-title" data-i18n="howitworks.system.step2.title">2. Distribute</h3>
+        <p data-i18n="howitworks.system.step2.text">The passphrase is split into fragments using Shamir's Secret Sharing. Each guardian receives a kit containing their unique fragment and detailed instructions. No single guardian can decrypt alone.</p>
+
+        <h3 class="step-title" data-i18n="howitworks.system.step3.title">3. Check-in</h3>
+        <p data-i18n="howitworks.system.step3.text">You check in regularly by entering your passphrase. This generates a cryptographic token that you send to your guardians, proving you are safe and active.</p>
+
+        <h3 class="step-title" data-i18n="howitworks.system.step4.title">4. Duress Protection</h3>
+        <p data-i18n="howitworks.system.step4.text">If you are under coercion, entering the duress passphrase generates a token that appears identical but contains a hidden flag. Your guardians can detect this and know to escalate immediately.</p>
+
+        <h3 class="step-title" data-i18n="howitworks.system.step5.title">5. Escalation</h3>
+        <p data-i18n="howitworks.system.step5.text">If check-ins stop, guardians follow a pre-defined escalation plan. They combine their fragments to reconstruct the passphrase and decrypt the evidence package.</p>
+      </div>
+
+      <div class="content-card">
+        <h2 data-i18n="howitworks.guardian.title">The Guardian Concept</h2>
+        <p data-i18n="howitworks.guardian.text">Guardians are trusted persons who each hold one fragment of the decryption key. They have three responsibilities: (1) regularly verify your check-in tokens, (2) detect duress signals, and (3) coordinate with other guardians during escalation. A configurable threshold ensures that a minimum number of guardians must cooperate — protecting against both single-point failures and betrayal.</p>
+      </div>
+
+      <div class="content-card">
+        <h2 data-i18n="howitworks.encryption.title">Client-Side Encryption</h2>
+        <p data-i18n="howitworks.encryption.text">AEGIS uses the Web Crypto API built into modern browsers. All encryption (AES-256-GCM) and key derivation (PBKDF2 with 600,000 iterations) happen locally. No plaintext data ever leaves your device. The encrypted package can be stored anywhere — cloud, USB, IPFS — without compromising security.</p>
+      </div>
+
+      <div class="content-card">
+        <h2 data-i18n="howitworks.authority.title">No Central Authority</h2>
+        <p data-i18n="howitworks.authority.text">AEGIS has no server, no database, no accounts, and no central point of failure. The system is fully distributed: you hold the encrypted data, your guardians hold the key fragments, and the check-in verification is purely cryptographic. No one — not even the developers — can access your data.</p>
+      </div>
+
+      <div class="alert alert-warning">
+        <span class="alert-icon">&#x26a0;&#xfe0f;</span>
+        <div>
+          <strong data-i18n="howitworks.warning.title">Security Notice</strong><br>
+          <span data-i18n="howitworks.warning.text">AEGIS is a tool, not a guarantee. Your security depends on: the strength of your passphrase, the trustworthiness of your guardians, the safe storage of the encrypted package, and regular check-ins. Losing your passphrase means losing access. If all guardian fragments are compromised, your data is exposed. Use AEGIS as one layer in a comprehensive security strategy.</span>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="aegis-footer">
+      <div class="footer-links">
+        <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
+        <span class="footer-sep">|</span>
+        <a href="imprint.html" data-i18n="footer.imprint">Imprint</a>
+        <span class="footer-sep">|</span>
+        <a href="howitworks.html" data-i18n="footer.howitworks">How It Works</a>
+      </div>
+      <p data-i18n="footer.text">AEGIS — No data leaves your browser</p>
+    </footer>
+
+  </div>
+  <script src="js/lang.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
