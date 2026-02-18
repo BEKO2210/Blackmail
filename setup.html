@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AEGIS — Einrichtung</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="aegis-app">
 
     <header class="aegis-header">
-      <a href="../index.html" class="aegis-logo">
+      <a href="index.html" class="aegis-logo">
         <div class="aegis-logo-icon">A</div>
         <span class="aegis-logo-text">AEGIS</span>
       </a>
@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <!-- ═══ STEP 1: Passphrase ═══ -->
+      <!-- STEP 1: Passphrase -->
       <div id="step1" class="card animate-in">
         <div class="card-header">
           <h2 class="card-title">🔑 Passphrase festlegen</h2>
@@ -101,7 +101,7 @@
         </div>
       </div>
 
-      <!-- ═══ STEP 2: Evidence Upload ═══ -->
+      <!-- STEP 2: Evidence Upload -->
       <div id="step2" class="card hidden">
         <div class="card-header">
           <h2 class="card-title">📁 Beweise hochladen</h2>
@@ -139,7 +139,7 @@
         </div>
       </div>
 
-      <!-- ═══ STEP 3: Guardian Config ═══ -->
+      <!-- STEP 3: Guardian Config -->
       <div id="step3" class="card hidden">
         <div class="card-header">
           <h2 class="card-title">🧩 Guardians konfigurieren</h2>
@@ -165,7 +165,6 @@
           <span class="form-hint">Höhere Schwelle = sicherer gegen Verrat, aber schwieriger in der Eskalation.</span>
         </div>
 
-        <!-- Processing indicator -->
         <div id="processingIndicator" class="hidden">
           <div class="progress-container">
             <div class="progress-bar">
@@ -191,7 +190,7 @@
         </div>
       </div>
 
-      <!-- ═══ STEP 4: Complete ═══ -->
+      <!-- STEP 4: Complete -->
       <div id="step4" class="card hidden">
         <div class="card-header">
           <h2 class="card-title">✅ AEGIS ist bereit</h2>
@@ -203,7 +202,6 @@
           <div>Alle Dateien wurden mit AES-256-GCM verschlüsselt. Der Schlüssel wurde in Fragmente aufgeteilt.</div>
         </div>
 
-        <!-- Proof of Existence -->
         <div class="form-group">
           <label class="form-label">Proof of Existence (SHA-256)</label>
           <div class="hash-display" id="proofHash">
@@ -213,7 +211,6 @@
           <span class="form-hint">Poste diesen Hash öffentlich (Twitter, Blog, etc.) als Beweis, dass deine Informationen zu diesem Zeitpunkt existierten.</span>
         </div>
 
-        <!-- Downloads -->
         <h3 class="mt-6 mb-4">📦 Downloads</h3>
 
         <div id="downloadSection">
@@ -223,7 +220,6 @@
           <div id="guardianDownloads"></div>
         </div>
 
-        <!-- Checklist -->
         <div class="card mt-6" style="background: var(--bg-input); border: none; box-shadow: none;">
           <h3 class="mb-4">Nächste Schritte</h3>
           <div class="card-desc" style="line-height: 2;">
@@ -248,42 +244,32 @@
 
   </div>
 
-  <script src="../js/crypto.js"></script>
-  <script src="../js/shamir.js"></script>
-  <script src="../js/checkin.js"></script>
+  <script src="crypto.js"></script>
+  <script src="shamir.js"></script>
+  <script src="checkin.js"></script>
   <script>
     'use strict';
 
-    // ─── State ───
     let currentStep = 1;
     let uploadedFiles = [];
     let generatedPackage = null;
     let guardianKits = null;
 
-    // ─── Wizard Navigation ───
     function goToStep(step) {
-      // Validate before advancing
       if (step > currentStep) {
         if (!validateStep(currentStep)) return;
       }
-
-      // Hide current
       document.getElementById(`step${currentStep}`).classList.add('hidden');
-
-      // Update progress
       for (let i = 1; i <= 4; i++) {
         const ws = document.getElementById(`ws${i}`);
         ws.classList.remove('active', 'completed');
         if (i < step) ws.classList.add('completed');
         if (i === step) ws.classList.add('active');
       }
-
-      // Show new
       currentStep = step;
       const newStep = document.getElementById(`step${step}`);
       newStep.classList.remove('hidden');
       newStep.classList.add('animate-in');
-
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -292,36 +278,18 @@
         const pass = document.getElementById('passphrase').value;
         const confirm = document.getElementById('passphraseConfirm').value;
         const duress = document.getElementById('duressPhrase').value;
-
-        if (pass.length < 8) {
-          showError('step1', 'Passphrase muss mindestens 8 Zeichen lang sein.');
-          return false;
-        }
-        if (pass !== confirm) {
-          showError('step1', 'Passphrasen stimmen nicht überein.');
-          return false;
-        }
-        if (!duress) {
-          showError('step1', 'Bitte lege eine Duress-Passphrase fest.');
-          return false;
-        }
-        if (pass === duress) {
-          showError('step1', 'Duress-Passphrase muss sich von der Hauptpassphrase unterscheiden.');
-          return false;
-        }
+        if (pass.length < 8) { showError('step1', 'Passphrase muss mindestens 8 Zeichen lang sein.'); return false; }
+        if (pass !== confirm) { showError('step1', 'Passphrasen stimmen nicht überein.'); return false; }
+        if (!duress) { showError('step1', 'Bitte lege eine Duress-Passphrase fest.'); return false; }
+        if (pass === duress) { showError('step1', 'Duress-Passphrase muss sich von der Hauptpassphrase unterscheiden.'); return false; }
         hideError('step1');
         return true;
       }
-
       if (step === 2) {
-        if (uploadedFiles.length === 0) {
-          showError('step2', 'Bitte lade mindestens eine Datei hoch.');
-          return false;
-        }
+        if (uploadedFiles.length === 0) { showError('step2', 'Bitte lade mindestens eine Datei hoch.'); return false; }
         hideError('step2');
         return true;
       }
-
       return true;
     }
 
@@ -335,53 +303,27 @@
       document.getElementById(`${stepId}Error`).classList.add('hidden');
     }
 
-    // ─── Password Strength ───
     const strengthLabels = ['', 'Schwach', 'Mittel', 'Gut', 'Stark'];
     document.getElementById('passphrase').addEventListener('input', function() {
       const strength = AegisCrypto.estimateStrength(this.value);
-      const bar = document.getElementById('strengthBar');
-      bar.className = `strength-bar strength-${strength}`;
+      document.getElementById('strengthBar').className = `strength-bar strength-${strength}`;
       document.getElementById('strengthLabel').textContent = strengthLabels[strength] || '';
     });
 
-    // ─── File Upload ───
     const uploadZone = document.getElementById('uploadZone');
     const fileInput = document.getElementById('fileInput');
-
     uploadZone.addEventListener('click', () => fileInput.click());
-
-    uploadZone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      uploadZone.classList.add('drag-over');
-    });
-
-    uploadZone.addEventListener('dragleave', () => {
-      uploadZone.classList.remove('drag-over');
-    });
-
-    uploadZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      uploadZone.classList.remove('drag-over');
-      handleFiles(e.dataTransfer.files);
-    });
-
-    fileInput.addEventListener('change', () => {
-      handleFiles(fileInput.files);
-      fileInput.value = '';
-    });
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+    uploadZone.addEventListener('dragleave', () => { uploadZone.classList.remove('drag-over'); });
+    uploadZone.addEventListener('drop', (e) => { e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
+    fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileInput.value = ''; });
 
     async function handleFiles(fileList) {
       for (const file of fileList) {
-        // Strip metadata from images
         let processedFile = file;
         if (file.type.startsWith('image/')) {
-          try {
-            processedFile = await AegisCrypto.stripImageMetadata(file);
-          } catch (e) {
-            console.warn('Metadata stripping failed, using original:', e);
-          }
+          try { processedFile = await AegisCrypto.stripImageMetadata(file); } catch (e) { console.warn('Metadata stripping failed:', e); }
         }
-
         uploadedFiles.push(processedFile);
       }
       renderFileList();
@@ -389,11 +331,7 @@
 
     function renderFileList() {
       const list = document.getElementById('fileList');
-      if (uploadedFiles.length === 0) {
-        list.innerHTML = '';
-        return;
-      }
-
+      if (uploadedFiles.length === 0) { list.innerHTML = ''; return; }
       list.innerHTML = uploadedFiles.map((file, i) => `
         <div class="file-item animate-in">
           <div class="file-item-info">
@@ -406,11 +344,7 @@
       `).join('');
     }
 
-    function removeFile(index) {
-      uploadedFiles.splice(index, 1);
-      renderFileList();
-    }
-
+    function removeFile(index) { uploadedFiles.splice(index, 1); renderFileList(); }
     function getFileIcon(type) {
       if (type.startsWith('image/')) return '🖼️';
       if (type.startsWith('video/')) return '🎬';
@@ -419,20 +353,13 @@
       if (type.includes('text')) return '📝';
       return '📎';
     }
-
     function formatSize(bytes) {
       if (bytes < 1024) return bytes + ' B';
       if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
       return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
+    function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    // ─── Guardian Config ───
     function updateThresholdOptions() {
       const total = parseInt(document.getElementById('totalGuardians').value);
       const select = document.getElementById('threshold');
@@ -441,14 +368,11 @@
         const opt = document.createElement('option');
         opt.value = i;
         opt.textContent = `${i} von ${total}`;
-        if (i === Math.ceil(total / 2) + 1 || i === Math.ceil(total * 0.6)) {
-          opt.selected = true;
-        }
+        if (i === Math.ceil(total * 0.6)) opt.selected = true;
         select.appendChild(opt);
       }
     }
 
-    // ─── Package Generation ───
     async function generatePackage() {
       const passphrase = document.getElementById('passphrase').value;
       const totalGuardians = parseInt(document.getElementById('totalGuardians').value);
@@ -459,50 +383,22 @@
       const btn = document.getElementById('generateBtn');
       btn.disabled = true;
       btn.textContent = '⏳ Verarbeite...';
-
-      const indicator = document.getElementById('processingIndicator');
-      indicator.classList.remove('hidden');
+      document.getElementById('processingIndicator').classList.remove('hidden');
 
       try {
-        // Progress updates
         updateProgress(10, 'Metadaten bereinigen...');
-
-        // Create metadata
-        const metadata = {
-          note: note || null,
-          checkinIntervalHours: interval,
-          totalGuardians: totalGuardians,
-          threshold: threshold,
-          createdAt: new Date().toISOString()
-        };
-
+        const metadata = { note: note || null, checkinIntervalHours: interval, totalGuardians, threshold, createdAt: new Date().toISOString() };
         updateProgress(25, 'Dateien verschlüsseln...');
-
-        // Create evidence package
-        const result = await AegisCrypto.createEvidencePackage(
-          uploadedFiles, metadata, passphrase
-        );
-
+        const result = await AegisCrypto.createEvidencePackage(uploadedFiles, metadata, passphrase);
         updateProgress(60, 'Schlüssel fragmentieren...');
-
-        // Generate the encryption key hash for Shamir splitting
-        // We split the passphrase itself (encoded as bytes)
         const encoder = new TextEncoder();
         const passphraseBytes = encoder.encode(passphrase);
         const shares = AegisShamir.split(passphraseBytes, totalGuardians, threshold);
-
         updateProgress(80, 'Guardian-Kits erstellen...');
-
-        // Create guardian kits
-        guardianKits = AegisShamir.createGuardianKits(
-          shares, result.package.id, interval
-        );
-
+        guardianKits = AegisShamir.createGuardianKits(shares, result.package.id, interval);
         updateProgress(95, 'Finalisiere...');
-
         generatedPackage = result;
 
-        // Store duress phrase hash for check-in page
         const duressPhrase = document.getElementById('duressPhrase').value;
         const configForCheckin = {
           packageId: result.package.id,
@@ -510,24 +406,16 @@
           passphraseHash: await AegisCrypto.sha256(passphrase),
           duressHash: await AegisCrypto.sha256(duressPhrase),
         };
-
-        // Store config in localStorage (only hashes, never plaintext)
         localStorage.setItem('aegis_config', JSON.stringify(configForCheckin));
-
         updateProgress(100, 'Fertig!');
 
-        // Show results
-        setTimeout(() => {
-          showResults(result, guardianKits);
-          goToStep(4);
-        }, 500);
-
+        setTimeout(() => { showResults(result, guardianKits); goToStep(4); }, 500);
       } catch (err) {
         console.error('Package generation failed:', err);
         showError('step3', 'Fehler: ' + err.message);
         btn.disabled = false;
         btn.textContent = '🔐 Paket generieren';
-        indicator.classList.add('hidden');
+        document.getElementById('processingIndicator').classList.add('hidden');
       }
     }
 
@@ -538,52 +426,40 @@
     }
 
     function showResults(result, kits) {
-      // Show proof hash
       document.getElementById('proofHashText').textContent = result.combinedProofHash;
-
-      // Guardian download buttons
-      const container = document.getElementById('guardianDownloads');
-      container.innerHTML = kits.map((kit, i) => `
+      document.getElementById('guardianDownloads').innerHTML = kits.map((kit, i) => `
         <button class="btn btn-secondary btn-block mb-4" onclick="downloadGuardianKit(${i})">
           🧩 Guardian-Kit #${i + 1} herunterladen
         </button>
       `).join('');
     }
 
-    // ─── Downloads ───
     function downloadPackage() {
       if (!generatedPackage) return;
-      const json = JSON.stringify(generatedPackage.package, null, 2);
-      downloadFile(json, `aegis-package-${generatedPackage.package.id.substring(0, 8)}.json`, 'application/json');
+      downloadFile(JSON.stringify(generatedPackage.package, null, 2), `aegis-package-${generatedPackage.package.id.substring(0, 8)}.json`, 'application/json');
     }
 
     function downloadGuardianKit(index) {
       if (!guardianKits || !guardianKits[index]) return;
-      const kit = guardianKits[index];
-      const json = JSON.stringify(kit, null, 2);
-      downloadFile(json, `aegis-guardian-kit-${index + 1}.json`, 'application/json');
+      downloadFile(JSON.stringify(guardianKits[index], null, 2), `aegis-guardian-kit-${index + 1}.json`, 'application/json');
     }
 
     function downloadFile(content, filename, type) {
       const blob = new Blob([content], { type });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      a.click();
+      a.href = url; a.download = filename; a.click();
       URL.revokeObjectURL(url);
     }
 
     function copyHash() {
-      const hash = document.getElementById('proofHashText').textContent;
-      navigator.clipboard.writeText(hash).then(() => {
+      navigator.clipboard.writeText(document.getElementById('proofHashText').textContent).then(() => {
         const btn = document.querySelector('.copy-btn');
         btn.textContent = '✓ Kopiert';
         setTimeout(() => btn.textContent = 'Kopieren', 2000);
       });
     }
 
-    // Init
     updateThresholdOptions();
   </script>
 </body>

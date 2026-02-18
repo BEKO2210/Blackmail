@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AEGIS — Guardian</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="aegis-app">
 
     <header class="aegis-header">
-      <a href="../index.html" class="aegis-logo">
+      <a href="index.html" class="aegis-logo">
         <div class="aegis-logo-icon">A</div>
         <span class="aegis-logo-text">AEGIS</span>
       </a>
@@ -39,37 +39,25 @@
                     placeholder='{"aegis_checkin": true, "timestamp": "...", ...}'></textarea>
         </div>
 
-        <button class="btn btn-primary btn-block" onclick="verifyToken()">
-          🔍 Token prüfen
-        </button>
+        <button class="btn btn-primary btn-block" onclick="verifyToken()">🔍 Token prüfen</button>
 
-        <!-- Verification Result -->
         <div id="verifyResult" class="hidden mt-6 animate-in">
           <div id="verifyOk" class="alert alert-success hidden">
             <span class="alert-icon">✅</span>
-            <div>
-              <strong>Token gültig</strong><br>
-              <span id="verifyOkDetails"></span>
-            </div>
+            <div><strong>Token gültig</strong><br><span id="verifyOkDetails"></span></div>
           </div>
-
           <div id="verifyDuress" class="alert alert-danger hidden">
             <span class="alert-icon">🚨</span>
             <div>
               <strong>DURESS ERKANNT — Person ist möglicherweise in Gefahr!</strong><br>
-              Die Person wurde gezwungen sich zu melden. Das Token sieht normal aus, 
-              enthält aber ein verstecktes Warnsignal.<br><br>
+              Die Person wurde gezwungen sich zu melden. Das Token sieht normal aus, enthält aber ein verstecktes Warnsignal.<br><br>
               <strong>Sofort Eskalationsstufe 3 einleiten!</strong><br>
               Kontaktiere andere Guardians und beginne mit der Fragment-Zusammenführung.
             </div>
           </div>
-
           <div id="verifyInvalid" class="alert alert-warning hidden">
             <span class="alert-icon">❌</span>
-            <div>
-              <strong>Token ungültig</strong><br>
-              <span id="verifyInvalidDetails"></span>
-            </div>
+            <div><strong>Token ungültig</strong><br><span id="verifyInvalidDetails"></span></div>
           </div>
         </div>
       </div>
@@ -78,53 +66,38 @@
       <div class="card">
         <div class="card-header">
           <h2 class="card-title">🧩 Fragmente zusammenführen</h2>
-          <p class="card-desc">
-            Wenn die Eskalation erreicht wurde, können Guardians hier ihre Fragmente 
-            kombinieren, um die Beweise zu entschlüsseln.
-          </p>
+          <p class="card-desc">Wenn die Eskalation erreicht wurde, können Guardians hier ihre Fragmente kombinieren, um die Beweise zu entschlüsseln.</p>
         </div>
 
         <div class="alert alert-warning">
           <span class="alert-icon">⚠️</span>
-          <div>
-            Führe Fragmente nur zusammen, wenn die Eskalationsbedingungen erfüllt sind. 
-            Alle beteiligten Guardians müssen zustimmen.
-          </div>
+          <div>Führe Fragmente nur zusammen, wenn die Eskalationsbedingungen erfüllt sind. Alle beteiligten Guardians müssen zustimmen.</div>
         </div>
 
         <div id="fragmentInputs">
           <div class="form-group">
             <label class="form-label">Guardian-Kit #1</label>
-            <textarea class="form-textarea form-input-mono fragment-input" rows="3"
-                      placeholder="Guardian-Kit JSON hier einfügen..."></textarea>
+            <textarea class="form-textarea form-input-mono fragment-input" rows="3" placeholder="Guardian-Kit JSON hier einfügen..."></textarea>
           </div>
           <div class="form-group">
             <label class="form-label">Guardian-Kit #2</label>
-            <textarea class="form-textarea form-input-mono fragment-input" rows="3"
-                      placeholder="Guardian-Kit JSON hier einfügen..."></textarea>
+            <textarea class="form-textarea form-input-mono fragment-input" rows="3" placeholder="Guardian-Kit JSON hier einfügen..."></textarea>
           </div>
           <div class="form-group">
             <label class="form-label">Guardian-Kit #3</label>
-            <textarea class="form-textarea form-input-mono fragment-input" rows="3"
-                      placeholder="Guardian-Kit JSON hier einfügen..."></textarea>
+            <textarea class="form-textarea form-input-mono fragment-input" rows="3" placeholder="Guardian-Kit JSON hier einfügen..."></textarea>
           </div>
         </div>
 
         <div class="btn-group">
           <button class="btn btn-ghost" onclick="addFragmentInput()">+ Weiteres Fragment</button>
-          <button class="btn btn-danger" onclick="assembleFragments()">
-            🔓 Passphrase rekonstruieren
-          </button>
+          <button class="btn btn-danger" onclick="assembleFragments()">🔓 Passphrase rekonstruieren</button>
         </div>
 
-        <!-- Assembly Result -->
         <div id="assemblyResult" class="hidden mt-6">
           <div class="alert alert-success" id="assemblySuccess" style="display:none">
             <span class="alert-icon">🔓</span>
-            <div>
-              <strong>Passphrase erfolgreich rekonstruiert!</strong><br>
-              Verwende diese Passphrase um das Evidenz-Paket zu entschlüsseln.
-            </div>
+            <div><strong>Passphrase erfolgreich rekonstruiert!</strong><br>Verwende diese Passphrase um das Evidenz-Paket zu entschlüsseln.</div>
           </div>
           <div class="hash-display" id="recoveredPassphrase" style="display:none">
             <button class="copy-btn" onclick="copyRecovered()">Kopieren</button>
@@ -151,21 +124,15 @@
 
         <div class="form-group">
           <label class="form-label">Passphrase</label>
-          <input type="password" id="decryptPass" class="form-input form-input-mono" 
-                 placeholder="Rekonstruierte Passphrase...">
+          <input type="password" id="decryptPass" class="form-input form-input-mono" placeholder="Rekonstruierte Passphrase...">
         </div>
 
-        <button class="btn btn-primary btn-block" onclick="decryptPackage()">
-          🔓 Entschlüsseln
-        </button>
+        <button class="btn btn-primary btn-block" onclick="decryptPackage()">🔓 Entschlüsseln</button>
 
         <div id="decryptResult" class="hidden mt-6">
           <div class="alert alert-success" id="decryptSuccess" style="display:none">
             <span class="alert-icon">📂</span>
-            <div>
-              <strong>Erfolgreich entschlüsselt!</strong><br>
-              <span id="decryptDetails"></span>
-            </div>
+            <div><strong>Erfolgreich entschlüsselt!</strong><br><span id="decryptDetails"></span></div>
           </div>
           <div id="decryptedFiles"></div>
           <div class="alert alert-danger" id="decryptError" style="display:none">
@@ -174,30 +141,22 @@
           </div>
         </div>
       </div>
-
     </main>
 
-    <footer class="aegis-footer">
-      AEGIS v1.0 — Guardian Edition
-    </footer>
-
+    <footer class="aegis-footer">AEGIS v1.0 — Guardian Edition</footer>
   </div>
 
-  <script src="../js/crypto.js"></script>
-  <script src="../js/shamir.js"></script>
-  <script src="../js/checkin.js"></script>
+  <script src="crypto.js"></script>
+  <script src="shamir.js"></script>
+  <script src="checkin.js"></script>
   <script>
     'use strict';
 
-    // ─── Token Verification ───
     async function verifyToken() {
       const input = document.getElementById('tokenInput').value.trim();
       if (!input) return;
-
       const resultDiv = document.getElementById('verifyResult');
       resultDiv.classList.remove('hidden');
-
-      // Hide all results
       document.getElementById('verifyOk').classList.add('hidden');
       document.getElementById('verifyDuress').classList.add('hidden');
       document.getElementById('verifyInvalid').classList.add('hidden');
@@ -205,7 +164,6 @@
       try {
         const token = JSON.parse(input);
         if (!token.aegis_checkin) throw new Error('Not an AEGIS token');
-
         const result = await AegisCheckin.verifyToken(token);
 
         if (result.status === 'DURESS') {
@@ -213,41 +171,29 @@
         } else if (result.valid) {
           document.getElementById('verifyOk').classList.remove('hidden');
           document.getElementById('verifyOkDetails').innerHTML = 
-            `Zeitstempel: ${new Date(result.timestamp).toLocaleString('de-DE')}<br>` +
-            `Alter: ${result.ageHours} Stunden<br>` +
-            `Paket-ID: ${result.packageId.substring(0, 16)}...`;
+            `Zeitstempel: ${new Date(result.timestamp).toLocaleString('de-DE')}<br>Alter: ${result.ageHours} Stunden<br>Paket-ID: ${result.packageId.substring(0, 16)}...`;
         } else {
           document.getElementById('verifyInvalid').classList.remove('hidden');
-          document.getElementById('verifyInvalidDetails').textContent = 
-            result.error || 'Hash-Prüfung fehlgeschlagen.';
+          document.getElementById('verifyInvalidDetails').textContent = result.error || 'Hash-Prüfung fehlgeschlagen.';
         }
       } catch (e) {
         document.getElementById('verifyInvalid').classList.remove('hidden');
-        document.getElementById('verifyInvalidDetails').textContent = 
-          'Ungültiges Token-Format: ' + e.message;
+        document.getElementById('verifyInvalidDetails').textContent = 'Ungültiges Token-Format: ' + e.message;
       }
     }
 
-    // ─── Fragment Assembly ───
     let fragmentCount = 3;
-
     function addFragmentInput() {
       fragmentCount++;
-      const container = document.getElementById('fragmentInputs');
       const div = document.createElement('div');
       div.className = 'form-group animate-in';
-      div.innerHTML = `
-        <label class="form-label">Guardian-Kit #${fragmentCount}</label>
-        <textarea class="form-textarea form-input-mono fragment-input" rows="3"
-                  placeholder="Guardian-Kit JSON hier einfügen..."></textarea>
-      `;
-      container.appendChild(div);
+      div.innerHTML = `<label class="form-label">Guardian-Kit #${fragmentCount}</label><textarea class="form-textarea form-input-mono fragment-input" rows="3" placeholder="Guardian-Kit JSON hier einfügen..."></textarea>`;
+      document.getElementById('fragmentInputs').appendChild(div);
     }
 
     function assembleFragments() {
       const inputs = document.querySelectorAll('.fragment-input');
       const shares = [];
-
       document.getElementById('assemblyResult').classList.remove('hidden');
       document.getElementById('assemblySuccess').style.display = 'none';
       document.getElementById('recoveredPassphrase').style.display = 'none';
@@ -257,141 +203,78 @@
         for (const input of inputs) {
           const val = input.value.trim();
           if (!val) continue;
-
           const kit = JSON.parse(val);
           const share = kit.aegis_guardian_kit ? kit.share : kit;
           shares.push(AegisShamir.importShare(share));
         }
-
         if (shares.length < 2) {
           document.getElementById('assemblyError').style.display = 'flex';
-          document.getElementById('assemblyErrorText').textContent = 
-            `Mindestens ${shares[0]?.threshold || 2} Fragmente benötigt. Aktuell: ${shares.length}`;
+          document.getElementById('assemblyErrorText').textContent = `Mindestens ${shares[0]?.threshold || 2} Fragmente benötigt. Aktuell: ${shares.length}`;
           return;
         }
-
-        // Check threshold
         const threshold = shares[0].threshold;
         if (shares.length < threshold) {
           document.getElementById('assemblyError').style.display = 'flex';
-          document.getElementById('assemblyErrorText').textContent = 
-            `${threshold} Fragmente benötigt, aber nur ${shares.length} vorhanden.`;
+          document.getElementById('assemblyErrorText').textContent = `${threshold} Fragmente benötigt, aber nur ${shares.length} vorhanden.`;
           return;
         }
-
-        // Reconstruct
         const recovered = AegisShamir.combine(shares);
-        const decoder = new TextDecoder();
-        const passphrase = decoder.decode(recovered);
-
+        const passphrase = new TextDecoder().decode(recovered);
         document.getElementById('assemblySuccess').style.display = 'flex';
         document.getElementById('recoveredPassphrase').style.display = 'block';
         document.getElementById('recoveredText').textContent = passphrase;
-
-        // Auto-fill decrypt field
         document.getElementById('decryptPass').value = passphrase;
-
       } catch (e) {
         document.getElementById('assemblyError').style.display = 'flex';
-        document.getElementById('assemblyErrorText').textContent = 
-          'Rekonstruktion fehlgeschlagen: ' + e.message;
+        document.getElementById('assemblyErrorText').textContent = 'Rekonstruktion fehlgeschlagen: ' + e.message;
       }
     }
 
     function copyRecovered() {
-      const text = document.getElementById('recoveredText').textContent;
-      navigator.clipboard.writeText(text).then(() => {
+      navigator.clipboard.writeText(document.getElementById('recoveredText').textContent).then(() => {
         const btn = document.querySelector('#recoveredPassphrase .copy-btn');
-        btn.textContent = '✓ Kopiert';
-        setTimeout(() => btn.textContent = 'Kopieren', 2000);
+        btn.textContent = '✓ Kopiert'; setTimeout(() => btn.textContent = 'Kopieren', 2000);
       });
     }
 
-    // ─── Package Decryption ───
     async function decryptPackage() {
       const fileInput = document.getElementById('packageFile');
       const passphrase = document.getElementById('decryptPass').value;
-
       const resultDiv = document.getElementById('decryptResult');
       resultDiv.classList.remove('hidden');
       document.getElementById('decryptSuccess').style.display = 'none';
       document.getElementById('decryptError').style.display = 'none';
       document.getElementById('decryptedFiles').innerHTML = '';
 
-      if (!fileInput.files.length) {
-        document.getElementById('decryptError').style.display = 'flex';
-        document.getElementById('decryptErrorText').textContent = 'Bitte eine Paket-Datei auswählen.';
-        return;
-      }
-
-      if (!passphrase) {
-        document.getElementById('decryptError').style.display = 'flex';
-        document.getElementById('decryptErrorText').textContent = 'Bitte Passphrase eingeben.';
-        return;
-      }
+      if (!fileInput.files.length) { document.getElementById('decryptError').style.display = 'flex'; document.getElementById('decryptErrorText').textContent = 'Bitte eine Paket-Datei auswählen.'; return; }
+      if (!passphrase) { document.getElementById('decryptError').style.display = 'flex'; document.getElementById('decryptErrorText').textContent = 'Bitte Passphrase eingeben.'; return; }
 
       try {
         const fileContent = await fileInput.files[0].text();
         const pkg = JSON.parse(fileContent);
-
         if (!pkg.aegis) throw new Error('Keine gültige AEGIS-Paketdatei.');
 
         const result = await AegisCrypto.decryptEvidencePackage(pkg, passphrase);
-
         document.getElementById('decryptSuccess').style.display = 'flex';
-        document.getElementById('decryptDetails').textContent = 
-          `${result.files.length} Datei(en) entschlüsselt. Erstellt: ${new Date(result.manifest.created).toLocaleString('de-DE')}`;
+        document.getElementById('decryptDetails').textContent = `${result.files.length} Datei(en) entschlüsselt. Erstellt: ${new Date(result.manifest.created).toLocaleString('de-DE')}`;
 
-        // Show decrypted files
         const container = document.getElementById('decryptedFiles');
-
         if (result.manifest.metadata?.note) {
-          container.innerHTML += `
-            <div class="card mt-4" style="background: var(--aegis-blue-subtle); border: none;">
-              <h3>📝 Notiz</h3>
-              <p class="mt-4 text-sm">${escapeHtml(result.manifest.metadata.note)}</p>
-            </div>
-          `;
+          container.innerHTML += `<div class="card mt-4" style="background: var(--aegis-blue-subtle); border: none;"><h3>📝 Notiz</h3><p class="mt-4 text-sm">${escapeHtml(result.manifest.metadata.note)}</p></div>`;
         }
-
         for (const file of result.files) {
           const blob = new Blob([file.data], { type: file.type });
           const url = URL.createObjectURL(blob);
-
-          container.innerHTML += `
-            <div class="file-item mt-4">
-              <div class="file-item-info">
-                <span class="file-item-icon">${getFileIcon(file.type)}</span>
-                <span class="file-item-name">${escapeHtml(file.name)}</span>
-              </div>
-              <a href="${url}" download="${escapeHtml(file.name)}" class="btn btn-secondary" style="font-size: 12px;">
-                💾 Herunterladen
-              </a>
-            </div>
-          `;
+          container.innerHTML += `<div class="file-item mt-4"><div class="file-item-info"><span class="file-item-icon">${getFileIcon(file.type)}</span><span class="file-item-name">${escapeHtml(file.name)}</span></div><a href="${url}" download="${escapeHtml(file.name)}" class="btn btn-secondary" style="font-size: 12px;">💾 Herunterladen</a></div>`;
         }
-
       } catch (e) {
         document.getElementById('decryptError').style.display = 'flex';
-        document.getElementById('decryptErrorText').textContent = 
-          'Entschlüsselung fehlgeschlagen: ' + e.message;
+        document.getElementById('decryptErrorText').textContent = 'Entschlüsselung fehlgeschlagen: ' + e.message;
       }
     }
 
-    function getFileIcon(type) {
-      if (!type) return '📎';
-      if (type.startsWith('image/')) return '🖼️';
-      if (type.startsWith('video/')) return '🎬';
-      if (type.startsWith('audio/')) return '🎵';
-      if (type.includes('pdf')) return '📄';
-      return '📎';
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
+    function getFileIcon(type) { if (!type) return '📎'; if (type.startsWith('image/')) return '🖼️'; if (type.startsWith('video/')) return '🎬'; if (type.startsWith('audio/')) return '🎵'; if (type.includes('pdf')) return '📄'; return '📎'; }
+    function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
   </script>
 </body>
 </html>
