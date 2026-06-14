@@ -1,0 +1,31 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "aegis-switch"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Runs the escalation check every hour. The Worker compares each active
+# switch's last check-in against its interval and sends reminders /
+# triggers guardian notifications via Resend.
+[triggers]
+crons = ["0 * * * *"]
+
+[vars]
+SERVICE_NAME = "AEGIS"
+# Public base URL of THIS worker (used to build check-in / manage links in emails).
+# After the first deploy, set this to your real workers.dev or custom domain URL.
+APP_URL = "https://aegis-switch.example.workers.dev"
+# The "From" address for outgoing mail. For real delivery this must be a
+# domain you verified in Resend, e.g. "AEGIS <noreply@your-domain.com>".
+# Resend's onboarding sandbox address "onboarding@resend.dev" works for testing.
+MAIL_FROM = "AEGIS <onboarding@resend.dev>"
+
+# D1 database binding. Create it once with:
+#   wrangler d1 create aegis
+# then paste the printed database_id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "aegis"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# Secret (NOT stored here). Set it with:
+#   wrangler secret put RESEND_API_KEY

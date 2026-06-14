@@ -48,12 +48,24 @@ AEGIS schützt deine Informationen und gibt sie automatisch frei, wenn du dich n
     └── pages.yml         ← Deployt die Seite automatisch auf GitHub Pages
 ```
 
-## Ablauf
+## Zwei Betriebsarten
+
+AEGIS bietet zwei Wege — du kannst sie kombinieren:
+
+### 1. Selbstverwaltet (100% clientseitig, ohne Server)
+Setup → Guardian-Kits verteilen → regelmäßig Check-in-Token an Guardians senden. Maximale Privatsphäre, aber Guardians müssen die Tokens selbst prüfen und im Ernstfall manuell handeln.
 
 1. **Setup:** Passphrase + Duress-Passphrase wählen → Beweise hochladen → Verschlüsselung → Guardian-Kits generieren
 2. **Verteilen:** Guardian-Kits an Vertrauenspersonen verteilen, Proof-Hash veröffentlichen
 3. **Check-in:** Regelmäßig Passphrase eingeben → Token an Guardians senden
 4. **Eskalation:** Kein Check-in → Guardians führen Fragmente zusammen → Entschlüsselung
+
+### 2. Auto-Switch (gehosteter Dienst, aktive E-Mails — für alle nutzbar)
+Die Seite **`protect.html`** („Auto-Switch"): Nutzer geben nur ihre E-Mail, ein Intervall und die E-Mail-Adressen ihrer Guardians ein. Ein gehosteter **Cloudflare Worker** prüft stündlich und **verschickt automatisch E-Mails** (Erinnerungen an den Nutzer, Benachrichtigungen an die Guardians, wenn ein Check-in ausbleibt). Guardians brauchen **kein** GitHub-Konto und keine App.
+
+→ Der Betreiber richtet das Backend **einmal** ein: siehe **[`service/README.md`](service/README.md)**. Danach trägt er die Worker-URL in `js/service-config.js` ein, und der Dienst steht weltweit allen zur Verfügung.
+
+> Hinweis: Der Auto-Switch nutzt bewusst einen Server (speichert E-Mails, Intervall, Nachricht), um aktiv mailen zu können. Hochsensible Beweise gehören weiterhin ins clientseitig verschlüsselte Paket — im Auto-Switch nur verlinken.
 
 ---
 
