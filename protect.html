@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AEGIS — Auto-Switch</title>
+  <link rel="icon" type="image/png" href="asset/aegis-logo-256.png">
+  <link rel="apple-touch-icon" href="asset/aegis-logo-256.png">
+  <meta name="theme-color" content="#0a0d12">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="aegis-app">
+
+    <header class="aegis-header">
+      <a href="index.html" class="aegis-logo">
+        <div class="aegis-logo-icon"><img src="asset/aegis-logo-256.png" alt="AEGIS"></div>
+        <span class="aegis-logo-text" data-text="AEGIS">AEGIS</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="aegis-nav" id="aegisNav">
+        <div class="nav-links">
+          <a href="index.html" data-i18n="nav.home">Home</a>
+          <a href="protect.html" data-i18n="nav.protect">Auto-Switch</a>
+          <a href="setup.html" data-i18n="nav.setup">Setup</a>
+          <a href="checkin.html" data-i18n="nav.checkin">Check-in</a>
+          <a href="guardian.html" data-i18n="nav.guardian">Guardian</a>
+          <a href="verify.html" data-i18n="nav.verify">Verify</a>
+          <a href="howitworks.html" data-i18n="nav.howitworks">How It Works</a>
+          <div class="nav-divider"></div>
+          <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+          <a href="imprint.html" data-i18n="nav.imprint">Imprint</a>
+        </div>
+        <div class="lang-toggle">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="de">DE</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="aegis-main">
+      <h1 data-i18n="protect.title">Auto-Switch — Email Notifications</h1>
+      <p class="subtitle" data-i18n="protect.subtitle">The simplest way: enter your guardians' emails. If you stop checking in, we automatically email them. No accounts, no apps for your guardians.</p>
+
+      <div class="alert alert-info">
+        <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg></span>
+        <div data-i18n="protect.info"><strong>Hosted service.</strong> Unlike the rest of AEGIS, this feature uses a server to store your interval, your message and your guardians' emails so it can send mail automatically. Your message is stored on the server — keep highly sensitive evidence in the client-side encrypted package and only link to it here.</div>
+      </div>
+
+      <div class="alert alert-warning hidden" id="serviceNotice">
+        <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4m0 4h.01"/></svg></span>
+        <div data-i18n="protect.notconfigured">The hosted service is not configured yet. The operator must deploy the Worker and set the API URL in js/service-config.js.</div>
+      </div>
+
+      <div id="protectForm" class="card">
+        <div class="card-header">
+          <h2 class="card-title" data-i18n="protect.form.title">Create your switch</h2>
+          <p class="card-desc" data-i18n="protect.form.desc">You will receive a confirmation email to activate it.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="protect.email.label">Your email</label>
+          <input type="email" id="ownerEmail" class="form-input" placeholder="you@example.com" autocomplete="off">
+          <span class="form-hint" data-i18n="protect.email.hint">We send check-in reminders and the activation link here.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="protect.interval.label">Check-in interval</label>
+          <select id="pInterval" class="form-select">
+            <option value="24" data-i18n="setup.step1.interval.24">Every 24 hours</option>
+            <option value="48" selected data-i18n="setup.step1.interval.48">Every 48 hours</option>
+            <option value="72" data-i18n="setup.step1.interval.72">Every 72 hours</option>
+            <option value="168" data-i18n="setup.step1.interval.168">Every 7 days</option>
+            <option value="336" data-i18n="setup.step1.interval.336">Every 14 days</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="protect.grace.label">Grace period</label>
+          <select id="pGrace" class="form-select">
+            <option value="0" data-i18n="protect.grace.0">No grace period</option>
+            <option value="12" data-i18n="protect.grace.12">12 hours</option>
+            <option value="24" selected data-i18n="protect.grace.24">24 hours</option>
+            <option value="48" data-i18n="protect.grace.48">48 hours</option>
+            <option value="72" data-i18n="protect.grace.72">72 hours</option>
+          </select>
+          <span class="form-hint" data-i18n="protect.grace.hint">Extra time after a missed deadline before guardians are notified.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="protect.reminder.label">Remind me before deadline</label>
+          <select id="pReminder" class="form-select">
+            <option value="0" data-i18n="protect.reminder.0">No reminder</option>
+            <option value="6" data-i18n="protect.reminder.6">6 hours before</option>
+            <option value="12" selected data-i18n="protect.reminder.12">12 hours before</option>
+            <option value="24" data-i18n="protect.reminder.24">24 hours before</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="protect.message.label">Message for your guardians</label>
+          <textarea id="pMessage" class="form-textarea" data-i18n-placeholder="protect.message.placeholder" placeholder="What your guardians should know or do if this switch fires..."></textarea>
+          <span class="form-hint" data-i18n="protect.message.hint">This exact text is emailed to every guardian if the switch fires.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="protect.evidence.label">Link to evidence (optional)</label>
+          <input type="url" id="pEvidence" class="form-input form-input-mono" placeholder="https://..." autocomplete="off">
+          <span class="form-hint" data-i18n="protect.evidence.hint">E.g. a link to your client-side encrypted AEGIS package in cloud storage.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="protect.guardians.label">Guardians (email recipients)</label>
+          <span class="form-hint mb-4" data-i18n="protect.guardians.hint" style="margin-top:0;">They receive your message automatically. Up to 10.</span>
+          <div id="guardianRows" class="guardian-rows"></div>
+          <button type="button" class="btn btn-ghost" id="addGuardianBtn" data-i18n="protect.add">+ Add guardian</button>
+        </div>
+
+        <div class="alert alert-danger hidden" id="protectError">
+          <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6m0-6l6 6"/></svg></span>
+          <span id="protectErrorText"></span>
+        </div>
+
+        <button class="btn btn-primary btn-block btn-lg" id="createSwitchBtn">
+          <svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span data-i18n="protect.submit">Create switch</span>
+        </button>
+      </div>
+
+      <div id="protectSuccess" class="card hidden animate-in">
+        <div class="alert alert-success">
+          <span class="alert-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></span>
+          <div>
+            <strong data-i18n="protect.success.title">Almost done — check your inbox!</strong><br>
+            <span data-i18n="protect.success.text">We sent you a confirmation email. Click the link inside to activate your switch. You'll then get a personal one-click check-in link.</span>
+            <div id="protectSuccessNote" class="text-sm" style="margin-top:10px;color:var(--yellow)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title mb-4" data-i18n="protect.how.title">How it works</h3>
+        <div class="card-desc" style="line-height: 2;">
+          <span data-i18n="protect.how.1">1. Enter your email, interval and your guardians' emails.</span><br>
+          <span data-i18n="protect.how.2">2. Confirm via the email we send you.</span><br>
+          <span data-i18n="protect.how.3">3. Check in with one click before each deadline (we remind you).</span><br>
+          <span data-i18n="protect.how.4">4. Miss it, and after the grace period your guardians are emailed automatically.</span>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="aegis-footer">
+      <div class="footer-links">
+        <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
+        <span class="footer-sep">|</span>
+        <a href="imprint.html" data-i18n="footer.imprint">Imprint</a>
+        <span class="footer-sep">|</span>
+        <a href="howitworks.html" data-i18n="footer.howitworks">How It Works</a>
+      </div>
+      <p data-i18n="footer.text">AEGIS — No data leaves your browser</p>
+    </footer>
+
+  </div>
+
+  <script src="js/icons.js"></script>
+  <script src="js/lang.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/service-config.js"></script>
+  <script src="js/service.js"></script>
+</body>
+</html>

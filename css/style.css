@@ -1675,6 +1675,30 @@ body {
   backdrop-filter: blur(4px);
 }
 
+/* ─── Auto-Switch guardian rows ─── */
+.guardian-rows { margin-bottom: 12px; }
+
+.guardian-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.guardian-row .g-email { flex: 2 1 0; min-width: 0; }
+.guardian-row .g-name { flex: 1 1 0; min-width: 0; }
+
+.guardian-row .g-remove {
+  flex: 0 0 auto;
+  padding: 10px 12px;
+  color: var(--text-muted);
+}
+
+.guardian-row .g-remove:hover {
+  color: var(--red);
+  background: var(--red-bg);
+}
+
 /* Stagger the feature cards for a livelier reveal */
 .feature-card:nth-child(1) { transition-delay: 0.02s; }
 .feature-card:nth-child(2) { transition-delay: 0.08s; }
