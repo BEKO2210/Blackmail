@@ -10,8 +10,63 @@
     await AegisLang.init();
     initNav();
     highlightActiveNav();
+    initPasswordToggles();
+    initReveal();
     document.dispatchEvent(new CustomEvent('aegis-ready'));
   });
+
+  // ── Password show/hide toggles ──
+  // Automatically adds an eye toggle to every password field so users can
+  // verify what they typed — critical for long passphrases.
+  function initPasswordToggles() {
+    var fields = document.querySelectorAll('input[type="password"]');
+    fields.forEach(function (input) {
+      if (input.dataset.noToggle === 'true') return;
+      var wrap = document.createElement('div');
+      wrap.className = 'password-wrap';
+      input.parentNode.insertBefore(wrap, input);
+      wrap.appendChild(input);
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'password-toggle';
+      btn.setAttribute('aria-label', 'Show password');
+      btn.tabIndex = -1;
+      btn.innerHTML = (window.AegisIcons && AegisIcons.eye) || '👁';
+      wrap.appendChild(btn);
+
+      btn.addEventListener('click', function () {
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.innerHTML = show
+          ? ((window.AegisIcons && AegisIcons.eyeOff) || '🙈')
+          : ((window.AegisIcons && AegisIcons.eye) || '👁');
+        btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        btn.classList.toggle('active', show);
+      });
+    });
+  }
+
+  // ── Scroll reveal for cards/sections ──
+  function initReveal() {
+    if (!('IntersectionObserver' in window)) return;
+    // Only static, always-visible blocks — never wizard/interactive cards
+    // that are toggled with display:none (they would stay invisible).
+    var targets = document.querySelectorAll('.feature-card, .content-card');
+    if (!targets.length) return;
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    targets.forEach(function (el) {
+      el.classList.add('reveal');
+      obs.observe(el);
+    });
+  }
 
   // ── Hamburger Navigation ──
   function initNav() {

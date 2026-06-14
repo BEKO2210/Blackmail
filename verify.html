@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AEGIS — Proof of Existence</title>
+  <link rel="icon" type="image/png" href="asset/aegis-logo-256.png">
+  <link rel="apple-touch-icon" href="asset/aegis-logo-256.png">
+  <meta name="theme-color" content="#0a0d12">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -51,15 +54,15 @@
 
         <div class="upload-zone" id="hashUploadZone" style="padding: 32px;">
           <div class="upload-zone-icon"><svg class="aegis-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div>
-          <div class="upload-zone-text" data-i18n="verify.hash.dropzone">Drag a file here to hash it</div>
-          <div class="upload-zone-hint" data-i18n="verify.hash.dropzone.hint">The file is processed locally and never uploaded</div>
+          <div class="upload-zone-text" data-i18n="verify.hash.upload.text">Drag a file here to hash it</div>
+          <div class="upload-zone-hint" data-i18n="verify.hash.upload.hint">The file is processed locally and never uploaded</div>
           <input type="file" id="hashFileInput" style="display:none">
         </div>
 
         <div id="hashResult" class="hidden mt-6 animate-in">
           <label class="form-label" data-i18n="verify.hash.result.label">SHA-256 Hash</label>
           <div class="hash-display">
-            <button class="copy-btn" onclick="copyFileHash()" data-i18n="verify.hash.copy">Copy</button>
+            <button class="copy-btn" onclick="copyFileHash()" data-i18n="copy">Copy</button>
             <span id="fileHash">&mdash;</span>
           </div>
           <div class="text-sm text-muted mt-4" id="hashFileInfo">&mdash;</div>
@@ -118,8 +121,8 @@
 
       <!-- Card 4: Explanation -->
       <div class="content-card" style="background: var(--bg-secondary);">
-        <h3 class="card-title" data-i18n="verify.explanation.title">What is Proof of Existence?</h3>
-        <p class="card-desc mt-4" style="line-height: 1.7;" data-i18n="verify.explanation.text">A Proof of Existence proves that certain data existed at a specific point in time — without revealing the content. A cryptographic hash (SHA-256) of the data is calculated and published publicly (e.g. on Twitter, a blog, or the Bitcoin blockchain via OpenTimestamps). Even the slightest change to the original data produces a completely different hash. This allows anyone to verify that the data has not been altered since the publication.</p>
+        <h3 class="card-title" data-i18n="verify.explain.title">What is Proof of Existence?</h3>
+        <p class="card-desc mt-4" style="line-height: 1.7;" data-i18n="verify.explain.text">A Proof of Existence proves that certain data existed at a specific point in time — without revealing the content. A cryptographic hash (SHA-256) of the data is calculated and published publicly (e.g. on Twitter, a blog, or the Bitcoin blockchain via OpenTimestamps). Even the slightest change to the original data produces a completely different hash. This allows anyone to verify that the data has not been altered since the publication.</p>
       </div>
     </main>
 
@@ -206,12 +209,12 @@
       var result = document.getElementById('matchResult');
       if (h1 === h2) {
         result.className = 'alert alert-success';
-        document.getElementById('matchIcon').textContent = '\u2705';
-        document.getElementById('matchText').innerHTML = '<strong>' + AegisLang.t('verify.compare.match') + '</strong> ' + AegisLang.t('verify.compare.match.detail');
+        document.getElementById('matchIcon').innerHTML = AegisIcons.check;
+        document.getElementById('matchText').innerHTML = AegisLang.t('verify.compare.match');
       } else {
         result.className = 'alert alert-danger';
-        document.getElementById('matchIcon').textContent = '\u274c';
-        document.getElementById('matchText').innerHTML = '<strong>' + AegisLang.t('verify.compare.nomatch') + '</strong> ' + AegisLang.t('verify.compare.nomatch.detail');
+        document.getElementById('matchIcon').innerHTML = AegisIcons.xCircle;
+        document.getElementById('matchText').innerHTML = AegisLang.t('verify.compare.nomatch');
       }
     }
 
@@ -230,18 +233,18 @@
         info.className = 'alert alert-info';
         var locale = AegisLang.getLocale();
         document.getElementById('packageInfoText').innerHTML =
-          '<strong>' + AegisLang.t('verify.package.info.id') + ':</strong> ' + escapeHtml(pkg.id) + '<br>' +
-          '<strong>' + AegisLang.t('verify.package.info.created') + ':</strong> ' + new Date(pkg.created).toLocaleString(locale) + '<br>' +
-          '<strong>' + AegisLang.t('verify.package.info.version') + ':</strong> ' + escapeHtml(pkg.version) + '<br>' +
-          '<strong>' + AegisLang.t('verify.package.info.files') + ':</strong> ' + (pkg.files ? pkg.files.length : 0) + '<br>' +
-          '<strong>' + AegisLang.t('verify.package.info.proofhash') + ':</strong><br>' +
+          '<strong>' + AegisLang.t('verify.package.id') + '</strong> ' + escapeHtml(pkg.id) + '<br>' +
+          '<strong>' + AegisLang.t('verify.package.created') + '</strong> ' + new Date(pkg.created).toLocaleString(locale) + '<br>' +
+          '<strong>' + AegisLang.t('verify.package.version') + '</strong> ' + escapeHtml(pkg.version) + '<br>' +
+          '<strong>' + AegisLang.t('verify.package.files') + '</strong> ' + (pkg.files ? pkg.files.length : 0) + '<br>' +
+          '<strong>' + AegisLang.t('verify.package.hash') + '</strong><br>' +
           '<code class="mono" style="font-size: 11px; word-break: break-all;">' + escapeHtml(pkg.combinedProofHash) + '</code>';
         document.getElementById('hash1').value = pkg.combinedProofHash;
         compareHashes();
       } catch (e) {
         info.style.display = 'flex';
         info.className = 'alert alert-danger';
-        document.getElementById('packageInfoText').textContent = AegisLang.t('verify.package.error') + ': ' + e.message;
+        document.getElementById('packageInfoText').textContent = AegisLang.t('verify.package.error.general') + e.message;
       }
     }
   </script>

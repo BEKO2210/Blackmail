@@ -38,6 +38,9 @@ window.AegisIcons = (function () {
     music: i('<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'),
     arrowRight: i('<path d="M5 12h14m-7-7l7 7-7 7"/>'),
     arrowLeft: i('<path d="M19 12H5m7 7l-7-7 7-7"/>'),
+    eye: i('<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>'),
+    eyeOff: i('<path d="M9.9 4.24A9.12 9.12 0 0112 4c6.5 0 10 7 10 7a13.16 13.16 0 01-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 002 11s3.5 7 10 7a9.74 9.74 0 005.39-1.61"/><path d="M14.12 14.12a3 3 0 11-4.24-4.24"/><path d="M2 2l20 20"/>'),
+    refresh: i('<polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>'),
 
     // Status dots for escalation levels
     dot: function (color) {
